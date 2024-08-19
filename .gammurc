@@ -1,0 +1,3 @@
+[gammu]
+port = /dev/cu.usbmodem14201
+connection = at115200

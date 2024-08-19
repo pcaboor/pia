@@ -8,4 +8,4 @@ const pool = mysql.createPool({
     database: 'saasapidb'
 });
 
-export default pool;
+module.exports = pool;
