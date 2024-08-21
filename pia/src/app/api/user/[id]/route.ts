@@ -1,8 +1,29 @@
 import { NextResponse } from 'next/server';
+import { getToken } from 'next-auth/jwt';
 import pool from '../../../../util/db';
 
-export async function GET(req, { params }) {
+// Bloquer l'accès au userdata par d'autres utilisateurs
+async function authenticate(req: Request) {
+  const token = await getToken({
+    req: req,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
+
+  if (!token || !token.sub) {
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  }
+
+  return token;
+}
+
+export async function GET(req: Request, { params }: { params: { id: string } }) {
+  const auth = await authenticate(req);
+  if (auth instanceof NextResponse) return auth;
+
   const { id } = params;
+  if (auth.sub !== id) {
+    return new Response(JSON.stringify({ message: 'Forbidden' }), { status: 403 });
+  }
 
   try {
     const query = 'SELECT * FROM users WHERE uniqID = ?';
@@ -19,8 +40,15 @@ export async function GET(req, { params }) {
   }
 }
 
-export async function PUT(req, { params }) {
+export async function PUT(req: Request, { params }: { params: { id: string } }) {
+  const auth = await authenticate(req);
+  if (auth instanceof NextResponse) return auth;
+
   const { id } = params;
+  if (auth.sub !== id) {
+    return new Response(JSON.stringify({ message: 'Forbidden' }), { status: 403 });
+  }
+
   const { firstName, lastName, email, teamName } = await req.json();
 
   // Valider les données entrantes
@@ -28,12 +56,9 @@ export async function PUT(req, { params }) {
     return new Response(JSON.stringify({ message: 'Missing required fields' }), { status: 400 });
   }
 
-  // Requête SQL pour mettre à jour les informations de l'utilisateur
   const query = `
-    UPDATE users
-    SET firstName = ?, lastName = ?, email = ?, teamName = ?
-    WHERE uniqID = ?
-  `;
+    UPDATE users SET firstName = ?, lastName = ?, email = ?, teamName = ?
+    WHERE uniqID = ?`;
 
   try {
     const [results] = await pool.promise().query(query, [firstName, lastName, email, teamName, id]);
@@ -49,8 +74,14 @@ export async function PUT(req, { params }) {
   }
 }
 
-export async function DELETE(req, { params }) {
+export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+  const auth = await authenticate(req);
+  if (auth instanceof NextResponse) return auth;
+
   const { id } = params;
+  if (auth.sub !== id) {
+    return new Response(JSON.stringify({ message: 'Forbidden' }), { status: 403 });
+  }
 
   const query = `DELETE FROM users WHERE uniqID = ?`;
 
@@ -63,7 +94,7 @@ export async function DELETE(req, { params }) {
 
     return new Response(JSON.stringify({ message: 'User deleted successfully' }), { status: 200 });
   } catch (error) {
-    console.error('Error updating user data:', error);
+    console.error('Error deleting user:', error);
     return new Response(JSON.stringify({ message: 'Internal Server Error' }), { status: 500 });
   }
 }
