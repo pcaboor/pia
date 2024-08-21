@@ -1,18 +1,25 @@
-// hooks/useSessionTimeout.ts
 'use client'
 import { useSession, signOut } from 'next-auth/react';
 import { useEffect } from 'react';
 
 export function useSessionTimeout() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   useEffect(() => {
-    if (session) {
+    if (status === 'authenticated') {
+      // Définir un délai pour la session (par exemple, 30 minutes)
       const timeout = setTimeout(() => {
-        signOut({ redirect: false });
-      }, 30000); // 30 secondes
+        signOut({ redirect: false }); // Déconnexion sans redirection
+      }, 5); // 30 minutes
 
       return () => clearTimeout(timeout);
     }
-  }, [session]);
+  }, [status, session]);
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      // Redirigez vers la page de connexion en cas de non-authentification
+      window.location.href = '/login';
+    }
+  }, [status]);
 }

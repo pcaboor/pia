@@ -14,7 +14,7 @@ export default function LoginForm() {
     password: '',
   });
 
-  const [error, setError] = useState(''); 
+  const [error, setError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -26,19 +26,18 @@ export default function LoginForm() {
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError(''); 
+    setError('');
 
     const result = await signIn('credentials', {
-      redirect: false, // Empêche la redirection automatique
+      redirect: false,
       email: user.email,
       password: user.password,
     });
 
     if (result?.error) {
-      setError(result.error); 
+      setError(result.error);
     } else if (result?.ok) {
-    
-      window.location.href = '/dashboard'; 
+      window.location.href = '/dashboard';
     }
   };
 
@@ -48,12 +47,12 @@ export default function LoginForm() {
         <div className="mx-auto grid w-[350px] gap-6">
           <div className="grid gap-2 text-center">
             <h1 className="text-3xl font-bold">Login</h1>
-            <p className="text-balance text-muted-foreground">
+            <p className="text-muted-foreground">
               Enter your email below to login to your account
             </p>
           </div>
           <div className="grid gap-4">
-            {error && <div className="text-red-500 text-center">{error}</div>} {/* Afficher le message d'erreur */}
+            {error && <div className="text-red-500 text-center">{error}</div>}
             <form onSubmit={onSubmit} className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
@@ -87,7 +86,7 @@ export default function LoginForm() {
               <Button type="submit" className="w-full">
                 Login
               </Button>
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="w-full" onClick={() => alert('Login with Google')}>
                 Login with Google
               </Button>
             </form>

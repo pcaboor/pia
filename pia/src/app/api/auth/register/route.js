@@ -2,13 +2,12 @@ import { NextResponse } from 'next/server';
 import bcrypt from 'bcrypt';
 import pool from '../../../../util/db';
 
-// Fonction pour insérer un utilisateur
-async function insertUser(user) {
+const insertUserInDB = async (user) => {
   const connection = await pool.promise().getConnection();
   try {
     const insertQuery = `
-      INSERT INTO users (uniqID, firstName, lastName, email, password, phone, company)
-      VALUES (UUID(), ?, ?, ?, ?, ?, ?)
+      INSERT INTO users (uniqID, firstName, lastName, email, password, phone, company, teamName, userImage)
+      VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     await connection.query(insertQuery, [
       user.firstName,
@@ -16,12 +15,14 @@ async function insertUser(user) {
       user.email,
       user.password,
       user.phone,
-      user.company,
+      user.company,   
+      user.teamName || null,
+      user.userImage,
     ]);
   } finally {
     connection.release();
   }
-}
+};
 
 export const POST = async (req) => {
   const user = await req.json();
@@ -43,7 +44,7 @@ export const POST = async (req) => {
     const hashedPassword = await bcrypt.hash(user.password, saltRounds);
 
     // Insérer l'utilisateur dans la base de données
-    await insertUser({
+    await insertUserInDB({
       ...user,
       password: hashedPassword
     });
