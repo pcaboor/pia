@@ -130,49 +130,8 @@ export default function Settings() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="flex h-16 gap-4 bg-muted/40 px-10 md:px-10 justify-between">
-        <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
-          <Link
-            href="#"
-            className="text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Home
-          </Link>
-        </nav>
-        <div className="flex items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="secondary" size="icon" className="rounded-full">
-                <Avatar>
-                  {userData && userData.userImage ? (
-                    <AvatarImage src={userData.userImage as string} />
-                  ) : (
-                    <AvatarFallback>
-                      {userData ? `${userData.firstName[0]}${userData.lastName[0]}` : 'U'}
-                    </AvatarFallback>
-                  )}
-                </Avatar>
-                <span className="sr-only">Toggle user menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Support</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Button
-                  onClick={async () => {
-                    await signOut();
-                  }}
-                >
-                  Log Out
-                </Button>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+      <header className="flex h-16 gap-4  px-10 md:px-10 justify-between">
+        
         <Sheet>
           <SheetTrigger asChild>
             <Button
@@ -224,7 +183,7 @@ export default function Settings() {
           </SheetContent>
         </Sheet>
       </header>
-      <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 bg-muted/40 p-4 md:gap-8 md:p-10">
+      <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4  p-4 md:gap-8 md:p-10">
         <div className="mx-auto grid w-full max-w-6xl gap-2">
           <h1 className="text-3xl font-semibold">Settings</h1>
         </div>
@@ -273,8 +232,6 @@ export default function Settings() {
                   <Button className="w-40" type="submit">Save</Button>
                 </form>
               </CardContent>
-              <CardFooter className="border-t px-6 py-4">
-              </CardFooter>
             </Card>
             <Card>
               <CardHeader>
@@ -336,6 +293,13 @@ export default function Settings() {
               {error && <div className="text-red-500">{error}</div>}
               {successMessage && <div className="text-green-500">{successMessage}</div>}
               <ModeToggle/>
+              <Button
+                  onClick={async () => {
+                    await signOut();
+                  }}
+                >
+                  Log Out
+                </Button>
               <Button onClick={handleDeleteUser} className="mt-4 bg-red-500 text-white hover:bg-red-600">
                 Delete Account
               </Button>

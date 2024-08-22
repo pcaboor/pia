@@ -3,20 +3,13 @@ import db from '../../../../util/db';
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcrypt';
-import fs from 'fs';
-
-
-const crypto = require('crypto');
-const path = require('path')
 
 const query = util.promisify(db.query).bind(db);
-
-
 
 export const authOptions = {
   session: {
     strategy: 'jwt',
-    maxAge: 5, 
+    maxAge: 60, 
   },
   providers: [
     CredentialsProvider({
@@ -63,10 +56,10 @@ export const authOptions = {
 
     },
   },
-  secret: process.env.NEXTAUTH_SECRET, // Ensure this is set
+  secret: process.env.NEXTAUTH_SECRET, 
   jwt: {
-    secret: process.env.NEXTAUTH_SECRET, // Ensure this is set
-    maxAge: 5
+    secret: process.env.NEXTAUTH_SECRET,
+    maxAge: 60
   },
 
 

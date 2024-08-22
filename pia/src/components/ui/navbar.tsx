@@ -1,27 +1,58 @@
 'use client'
-
 import Link from 'next/link';
 import { Button } from './button';
-import { ModeToggle } from '../themeSwitcher';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useUserData } from '@/hook/useUserData';
-
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
+import { CommandDialogDemo } from '../command-dialog-menu';
+import { Loader2 } from 'lucide-react';
 
 const NavbarUser = () => {
+  const { userData, loading } = useUserData();
+  let isActive = '';
 
-  const { userData } = useUserData();
+  if (loading) {
+    return 
+  }
+
+  const handleBreadcrumbClick = (href: string) => {
+    isActive = href;
+  };
 
   return (
     <>
       <nav className=" p-4">
         <div className="container mx-auto flex justify-between items-center">
-          <div className="text-lg font-bold ">
-            <ModeToggle />
-          </div>
-          <div className="flex space-x-4">
+          <Breadcrumb>
+            <BreadcrumbList>  
+              <BreadcrumbItem>
+                <BreadcrumbLink onClick={() => handleBreadcrumbClick('/dashboard')}>
+                  <Link href="/dashboard">Home</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink onClick={() => handleBreadcrumbClick('/dashboard/settings')}>
+                  <Link href="/dashboard/settings">Settings</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink onClick={() => handleBreadcrumbClick('/account')}>
+                  <Link href="/account">Account</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+          
+          <div className="flex space-x-4  items-center">
+          <CommandDialogDemo />
             <Avatar>
               {userData && userData.userImage ? (
                 <AvatarImage src={userData.userImage as string} />
@@ -31,13 +62,16 @@ const NavbarUser = () => {
                 </AvatarFallback>
               )}
             </Avatar>
-            <Button variant="outline" className=" p-3 ">
-              <Link href="/">Contact</Link>
-            </Button>
+          
+            
           </div>
         </div>
       </nav>
-      <div className="" />
+      {isActive && (
+        <div className="bg-gray-200 p-4">
+          <p>Vous avez cliqué sur le lien : {isActive}</p>
+        </div>
+      )}
     </>
   );
 };

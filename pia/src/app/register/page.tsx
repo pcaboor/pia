@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,14 +8,13 @@ import { z } from "zod";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import Navbar from '@/components/ui/navbar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { SeparatorDemo } from '@/components/ui/message-profil-type';
 import { InputOTPForm } from '@/components/ui/input-otp-form';
 import { toast } from '@/components/ui/use-toast';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const FormSchema = z.object({
   teamName: z.string().optional(),
@@ -27,7 +26,7 @@ const FormSchema = z.object({
   company: z.string().min(1, "Company type is required"),
   pin: z.string().length(6, "OTP must be 6 characters long").optional(),
   terms: z.boolean().refine(val => val === true, "You must accept the terms and conditions"),
-  userImage: z.string().optional() 
+  userImage: z.string().optional()
 })
   .refine(data => data.company !== 'business' || data.teamName, {
     message: "Team name is required for business accounts",
@@ -53,6 +52,8 @@ export default function RegisterForm() {
   });
 
   const { watch, setValue, formState: { isValid } } = form;
+
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleCompanyChange = (value: string) => {
     setValue('company', value);
@@ -83,7 +84,14 @@ export default function RegisterForm() {
       reader.readAsDataURL(file);
     }
   };
-  
+
+  const handleRemoveImage = () => {
+    setProfileImage(null);
+    setValue('userImage', '');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
 
   const isStepComplete = {
     personal: watch('firstName') && watch('lastName') && watch('company') && (watch('company') !== 'business' || watch('teamName')),
@@ -147,7 +155,6 @@ export default function RegisterForm() {
 
   return (
     <>
-      <Navbar />
       <div className="flex flex-col min-h-screen items-center py-12">
         <div className="w-full max-w-md">
           <h1 className="text-4xl font-bold text-center mb-2">Create Your Account</h1>
@@ -207,19 +214,28 @@ export default function RegisterForm() {
                     <Label htmlFor="password">Password</Label>
                     <Input id="password" type="password" {...form.register("password")} placeholder="••••••••" />
                   </div>
-                  <div className="grid w-full max-w-sm items-center gap-1.5">
-                    <Label htmlFor="userImage">Profile Picture</Label>
-                    <Input id="userImage" type="file" accept="image/*" onChange={handleFileChange} />
-                    <Avatar>
-                      {userImage ? (
-                        <AvatarImage src={userImage as string} />
-                      ) : (
-                        <AvatarFallback>
-                          {watch('firstName')[0]}{watch('lastName')[0]}
-                        </AvatarFallback>
-                      )}
-                    </Avatar>
+                  <div className="flex items-end gap-4">
+                    <div className="flex flex-col w-full max-w-sm gap-1.5">
+                      <Label htmlFor="userImage">Profile Picture</Label>
+                      <Input id="userImage" ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} />
+                    </div>
+                    <div className="flex items-end">
+                      <Avatar>
+                        {userImage ? (
+                          <AvatarImage src={userImage as string} />
+                        ) : (
+                          <AvatarFallback>
+                            {watch('firstName')[0]}{watch('lastName')[0]}
+                          </AvatarFallback>
+                        )}
+                      </Avatar>
+                    </div>
                   </div>
+                  {userImage && (
+                    <Button type="button" variant="secondary" onClick={handleRemoveImage}>
+                      Remove Image
+                    </Button>
+                  )}
                 </>
               )}
 

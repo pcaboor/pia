@@ -6,8 +6,15 @@ import { ArrowRightIcon, Loader2 } from 'lucide-react';
 import { useUserData } from '@/hook/useUserData';
 
 const DashboardHome: React.FC = () => {
-  const { userData } = useUserData();
+  const { userData, loading } = useUserData();
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-6 w-6 animate-spin" />
+      </div>
+    );
+  }
   return (
     <div className="flex flex-1 flex-grow flex-col gap-4 lg:gap-6">
     <div className="flex flex-1 items-center justify-center rounded-3xl border bg-muted/50  gap-6 m-10">

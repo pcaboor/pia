@@ -8,6 +8,7 @@ export const useUserData = () => {
   const router = useRouter();
   const [userData, setUserData] = useState<any>(null);
   const [error, setError] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -28,10 +29,11 @@ export const useUserData = () => {
           setError('Failed to load user data');
         }
       }
+      setLoading(false);
     };
 
     fetchUserData();
   }, [status, session?.user?.uniqID, router]);
 
-  return { userData, error };
+  return { userData, error, loading };
 };
