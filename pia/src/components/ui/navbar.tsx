@@ -28,6 +28,7 @@ const NavbarUser = () => {
   return (
     <>
       <nav className=" p-4">
+        
         <div className="container mx-auto flex justify-between items-center">
           <Breadcrumb>
             <BreadcrumbList>  
