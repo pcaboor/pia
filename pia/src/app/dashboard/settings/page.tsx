@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Loader2, Menu, Package2 } from "lucide-react";
 import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { ReactNode, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,14 +15,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
@@ -34,7 +26,7 @@ import {
   TableHead,
   TableRow,
 } from "@/components/ui/table";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 import { ModeToggle } from "@/components/themeSwitcher";
 
 
@@ -285,7 +277,7 @@ export default function Settings() {
                     <TableRow>
                       <TableCell>Team Name</TableCell>
                       <TableCell>
-                        {userData.teamName}</TableCell>
+                        {userData.uniqID}</TableCell>
                     </TableRow>
                   </TableBody>
                 </Table>

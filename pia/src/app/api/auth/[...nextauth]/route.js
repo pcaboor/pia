@@ -9,7 +9,7 @@ const query = util.promisify(db.query).bind(db);
 export const authOptions = {
   session: {
     strategy: 'jwt',
-    maxAge: 60, 
+    maxAge: 3600, 
   },
   providers: [
     CredentialsProvider({
@@ -59,7 +59,7 @@ export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET, 
   jwt: {
     secret: process.env.NEXTAUTH_SECRET,
-    maxAge: 60
+    maxAge: 3600
   },
 
 

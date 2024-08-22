@@ -9,6 +9,8 @@ import {
   Smile,
   Terminal,
   User,
+  User2,
+  Users2,
 } from "lucide-react"
 
 import {
@@ -63,13 +65,15 @@ export function CommandDialogDemo() {
             <Link href="/dashboard/settings" onClick={handleItemClick}>
               <CommandItem>
                 <Terminal className="mr-2 h-4 w-4" />
-                <span>use client</span>
+                <span>Settings</span>
               </CommandItem>
             </Link>
-            <CommandItem>
-              <Smile className="mr-2 h-4 w-4" />
-              <span>Settings</span>
-            </CommandItem>
+            <Link href="/dashboard/team" onClick={handleItemClick}>
+              <CommandItem>
+              <Users2 className="mr-2 h-4 w-4" />
+              <span>Create a team</span>
+              </CommandItem>
+            </Link>
             <CommandItem>
               <Calculator className="mr-2 h-4 w-4" />
               <span>Calculator</span>

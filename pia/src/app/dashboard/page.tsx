@@ -20,7 +20,7 @@ const DashboardHome: React.FC = () => {
     <div className="flex flex-1 items-center justify-center rounded-3xl border bg-muted/50  gap-6 m-10">
       <div className="flex max-w-[500px] flex-col items-center gap-1 text-center p-7">
         <h3 className="text-2xl font-bold tracking-tight">
-          Explore the SaaS Starter
+          Welcome
         </h3>
         <p className="mt-3 text-muted-foreground">
           This reference app demonstrates how to build a multi-tenant B2B SaaS
@@ -39,10 +39,7 @@ const DashboardHome: React.FC = () => {
             </Button>
           </Link>
         </div>
-        <p className="mt-3 text-muted-foreground">
-          (You must be logged in with an &quot;admin&quot; role in your
-          organization.)
-        </p>
+      
       </div>
     </div>
   </div>

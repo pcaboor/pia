@@ -10,7 +10,7 @@ export function useSessionTimeout() {
       // Définir un délai pour la session (par exemple, 30 minutes)
       const timeout = setTimeout(() => {
         signOut({ redirect: false }); // Déconnexion sans redirection
-      }, 60); 
+      }, 3600); 
 
       return () => clearTimeout(timeout);
     }

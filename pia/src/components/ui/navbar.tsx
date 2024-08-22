@@ -36,16 +36,15 @@ const NavbarUser = () => {
                   <Link href="/dashboard">Home</Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
+                <BreadcrumbItem>
                 <BreadcrumbLink onClick={() => handleBreadcrumbClick('/dashboard/settings')}>
                   <Link href="/dashboard/settings">Settings</Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
-              <BreadcrumbSeparator />
+             
               <BreadcrumbItem>
-                <BreadcrumbLink onClick={() => handleBreadcrumbClick('/account')}>
-                  <Link href="/account">Account</Link>
+                <BreadcrumbLink onClick={() => handleBreadcrumbClick('/dashboard/team')}>
+                  <Link href="/dashboard/team">Team</Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
             </BreadcrumbList>
