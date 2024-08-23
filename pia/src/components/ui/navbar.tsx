@@ -67,11 +67,7 @@ const NavbarUser = () => {
           </div>
         </div>
       </nav>
-      {isActive && (
-        <div className="bg-gray-200 p-4">
-          <p>Vous avez cliqué sur le lien : {isActive}</p>
-        </div>
-      )}
+     
     </>
   );
 };

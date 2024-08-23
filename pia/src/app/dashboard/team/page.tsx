@@ -25,6 +25,7 @@ import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMe
 import React from "react";
 import { Label } from "@/components/ui/label";
 
+
 export default function TeamsPage() {
     const { userData, error: userDataError, loading: userDataLoading } = useUserData();
     const [teamName, setTeamName] = useState('');
@@ -158,15 +159,7 @@ export default function TeamsPage() {
                         Settings
                     </Link>
                 </nav>
-                <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
-                    <form className="ml-auto flex-1 sm:flex-initial">
-                        <div className="relative">
-                            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                            <Input type="search" placeholder="Search project..." className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]" />
-                        </div>
-                    </form>
 
-                </div>
             </header>
             <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 p-4 md:gap-8 md:p-10">
                 <div className="mx-auto grid w-full max-w-6xl gap-2">
@@ -177,81 +170,93 @@ export default function TeamsPage() {
                         <Link href="#" className="font-semibold text-primary">
                             General
                         </Link>
-                        <Link href="#">Security</Link>
-                        <Link href="#">Integrations</Link>
-                        <Link href="#">Support</Link>
-                        <Link href="#">Organizations</Link>
-                        <Link href="#">Advanced</Link>
+                        <Link href="#" className="text-sm text-muted-foreground hover:text-foreground font-light">Security</Link>
+                        <Link href="#" className="text-sm text-muted-foreground hover:text-foreground font-light">Integrations</Link>
+                        <Link href="#" className="text-sm text-muted-foreground hover:text-foreground font-light">Support</Link>
+                        <Link href="#" className="text-sm text-muted-foreground hover:text-foreground font-light">Organizations</Link>
+                        <Link href="#" className="text-sm text-muted-foreground hover:text-foreground font-light">Advanced</Link>
+                        
                     </nav>
                     <div className="grid gap-6">
-                        {teams.length === 0 ? (
-                            <p className="text-center">No team</p>
-                        ) : (
-                            <Card className="border-none shadow-none">
-                                <CardHeader>
-                                    <div className="flex items-center justify-between">
-                                        <h2 className="text-lg font-semibold">Your Teams</h2>
-                                        <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                                            <AlertDialogTrigger asChild>
-                                                <Button onClick={() => setDialogOpen(true)}>
-                                                    Create Team
-                                                </Button>
-                                            </AlertDialogTrigger>
-                                            <AlertDialogContent>
-                                                <AlertDialogHeader>
-                                                    <AlertDialogTitle>Create a New Team</AlertDialogTitle>
-                                                    <AlertDialogDescription>
-                                                        Enter the name and add a picture for your new team.
-                                                    </AlertDialogDescription>
-                                                </AlertDialogHeader>
-                                                <Input
-                                                    type="text"
-                                                    value={teamName}
-                                                    onChange={(e) => setTeamName(e.target.value)}
-                                                    placeholder="Enter team name"
-                                                    className="mb-4"
-                                                />
-                                                <div className="flex items-end gap-4 mb-4">
-                                                    <div className="flex flex-col w-full max-w-sm gap-1.5">
-                                                        <Label htmlFor="teamImage">Team Picture</Label>
-                                                        <Input
-                                                            id="teamImage"
-                                                            ref={fileInputRef}
-                                                            type="file"
-                                                            accept="image/*"
-                                                            onChange={handleFileChange}
-                                                        />
-                                                    </div>
-                                                    <div className="flex items-end">
-                                                        <Avatar>
-                                                            {teamPicture ? (
-                                                                <AvatarImage src={teamPicture as string} />
-                                                            ) : (
-                                                                <AvatarFallback>
-                                                                    {teamName ? teamName[0].toUpperCase() : 'T'}
-                                                                </AvatarFallback>
-                                                            )}
-                                                        </Avatar>
-                                                    </div>
-                                                </div>
-                                                {teamPicture && (
-                                                    <Button type="button" variant="secondary" onClick={handleRemoveImage} className="mb-4">
-                                                        Remove Image
-                                                    </Button>
-                                                )}
-                                                <AlertDialogFooter>
-                                                    <AlertDialogCancel onClick={() => setDialogOpen(false)}>Cancel</AlertDialogCancel>
-                                                    <AlertDialogAction onClick={handleCreateTeam}>
-                                                        Create Team
-                                                    </AlertDialogAction>
-                                                </AlertDialogFooter>
-                                            </AlertDialogContent>
-                                        </AlertDialog>
+
+                        <Card className="border-none shadow-none">
+                            <CardHeader>
+
+                                <div className="flex items-center justify-between">
+
+                                    <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
+                                        <form className="ml-auto flex-1 ">
+                                            <div className="relative">
+                                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                                <Input type="search" placeholder="Search teams..." className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]" />
+                                            </div>
+                                        </form>
                                     </div>
-                                </CardHeader>
-                                
-                                <CardContent>
-                                    {error && <p style={{ color: 'red' }}>{error}</p>}
+                                    <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                                        <AlertDialogTrigger asChild>
+                                            <Button onClick={() => setDialogOpen(true)} className="text-sm">
+                                                Create Team
+                                            </Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>Create a New Team</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    Enter the name and add a picture for your new team.
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <Input
+                                                type="text"
+                                                value={teamName}
+                                                onChange={(e) => setTeamName(e.target.value)}
+                                                placeholder="Enter team name"
+                                                className="mb-4"
+                                            />
+                                            <div className="flex items-end gap-4 mb-4">
+                                                <div className="flex flex-col w-full max-w-sm gap-1.5">
+                                                    <Label htmlFor="teamImage">Team Picture</Label>
+                                                    <Input
+                                                        id="teamImage"
+                                                        ref={fileInputRef}
+                                                        type="file"
+                                                        accept="image/*"
+                                                        onChange={handleFileChange}
+                                                    />
+                                                </div>
+                                                <div className="flex items-end">
+                                                    <Avatar>
+                                                        {teamPicture ? (
+                                                            <AvatarImage src={teamPicture as string} />
+                                                        ) : (
+                                                            <AvatarFallback>
+                                                                {teamName ? teamName[0].toUpperCase() : 'T'}
+                                                            </AvatarFallback>
+                                                        )}
+                                                    </Avatar>
+                                                </div>
+                                            </div>
+                                            {teamPicture && (
+                                                <Button type="button" variant="secondary" onClick={handleRemoveImage} className="mb-4">
+                                                    Remove Image
+                                                </Button>
+                                            )}
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel onClick={() => setDialogOpen(false)}>Cancel</AlertDialogCancel>
+                                                <AlertDialogAction onClick={handleCreateTeam} >
+                                                    Create Team
+                                                </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
+
+                                </div>
+                            </CardHeader>
+
+                            <CardContent>
+                                {error && <p style={{ color: 'red' }}>{error}</p>}
+                                {teams.length === 0 ? (
+                                    <p className="text-center">No team</p>
+                                ) : (
                                     <div className="mt-4">
                                         {teams.map((team) => (
                                             <div key={team.teamID} className="flex items-center space-x-3 mb-4 p-4 border rounded-lg">
@@ -266,13 +271,16 @@ export default function TeamsPage() {
                                                 </Avatar>
                                                 <div className="flex-1">
                                                     <div className="flex items-center space-x-2 mb-1">
-                                                        <h3 className="text-sm">{team.teamName}</h3>
+                                                        <h3 className="text-sm ">{team.teamName}</h3>
                                                         <Badge variant="secondary">
                                                             {userData.uniqID === team.createdBy ? 'Owner' : 'Member'}
                                                         </Badge>
+                                                        
                                                     </div>
-                                                    <p className="text-sm">{team.teamID}</p>
+                                                    <p className="text-xs font-mono">{team.teamID}</p>
+                                                   
                                                 </div>
+                                                <Button className="text-blue-500 font-light" variant="link">/api/test</Button>
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger asChild>
                                                         <Button onClick={() => handleDeleteTeam(team.teamID)} variant="ghost">
@@ -287,6 +295,7 @@ export default function TeamsPage() {
                                                         </DropdownMenuCheckboxItem>
                                                         <DropdownMenuCheckboxItem>
                                                             Manage
+
                                                         </DropdownMenuCheckboxItem>
                                                         <DropdownMenuCheckboxItem
                                                             className="text-red"
@@ -298,11 +307,14 @@ export default function TeamsPage() {
                                                 </DropdownMenu>
                                             </div>
                                         ))}
-                                    </div>
-                                </CardContent>
-                            </Card>
 
-                        )}
+                                    </div>
+                                )}
+                            </CardContent>
+
+                        </Card>
+
+
                     </div>
                 </div>
             </main>

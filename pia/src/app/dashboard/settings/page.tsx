@@ -2,115 +2,48 @@
 
 import Link from "next/link";
 import { Loader2, Menu, Package2 } from "lucide-react";
-import { signOut, useSession } from 'next-auth/react';
+import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHeader,
-  TableHead,
-  TableRow,
-} from "@/components/ui/table";
-
+import { Table, TableBody, TableCaption, TableCell, TableHeader, TableHead, TableRow } from "@/components/ui/table";
 import { ModeToggle } from "@/components/themeSwitcher";
-
+import { useUserPostData } from "@/hook/useUserPostData";
+import { useEffect } from "react";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function Settings() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
-  const [userData, setUserData] = useState<any>(null);
-  const [error, setError] = useState<string>('');
-  const [firstName, setFirstName] = useState<string>('');
-  const [lastName, setLastName] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
-  const [teamName, setTeamName] = useState<string>('');
-  const [successMessage, setSuccessMessage] = useState<string>('');
+  const {
+    userData,
+    status,
+    firstName,
+    lastName,
+    email,
+    teamName,
+    error,
+    successMessage,
+    setFirstName,
+    setLastName,
+    setEmail,
+    setTeamName,
+    handleUpdate,
+    handleDeleteUser,
+    fetchUserData,
+  } = useUserPostData();
 
+  const { toast } = useToast();
+  const router = useRouter();
 
   useEffect(() => {
-    if (status === 'loading') return;
-
-    if (status === 'unauthenticated') {
-      router.push('/login');
-      return;
+    if (successMessage) {
+      toast({ description: "Settings updated successfully!" });
+      fetchUserData(); 
+     
     }
-
-    const fetchUserData = async () => {
-      if (session?.user?.uniqID) {
-        try {
-          const response = await fetch(`/api/user/${session.user.uniqID}`);
-          if (!response.ok) throw new Error('Failed to fetch user data');
-          const data = await response.json();
-          setUserData(data);
-          setFirstName(data.firstName || '');
-          setLastName(data.lastName || '');
-          setEmail(data.email || '');
-          setTeamName(data.teamName || '');
-        } catch (error) {
-          setError('Failed to load user data');
-        }
-      }
-    };
-
-    fetchUserData();
-  }, [status, session?.user?.uniqID, router]);
-
-  const handleUpdate = async (e: { preventDefault: () => void; }) => {
-    e.preventDefault();
-    try {
-      const response = await fetch(`/api/user/${userData.uniqID}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ firstName, lastName, email, teamName }),
-      });
-      if (!response.ok) throw new Error('Failed to update user data');
-      const data = await response.json();
-      setUserData((prevData: any) => ({
-        ...prevData,
-        firstName,
-        lastName,
-        email,
-        teamName,
-      }));
-      alert('User updated successfully');
-    } catch (error) {
-      setError('Failed to update user data');
-    }
-  };
-
-  const handleDeleteUser = async () => {
-    if (userData && userData.uniqID) {
-      try {
-        const response = await fetch(`/api/user/${userData.uniqID}`, {
-          method: 'DELETE',
-        });
-        if (!response.ok) throw new Error('Failed to delete user');
-        setSuccessMessage('User deleted successfully');
-        setUserData(null);
-        await signOut(); // Optionnel : Déconnecter l'utilisateur après la suppression
-        router.push('/login'); // Redirection après suppression
-      } catch (error) {
-        setError('Failed to delete user');
-      }
-    }
-  };
+  }, [successMessage, fetchUserData, toast]);
 
   if (status === 'loading') {
     return (
@@ -122,8 +55,7 @@ export default function Settings() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="flex h-16 gap-4  px-10 md:px-10 justify-between">
-        
+      <header className="flex h-16 gap-4 px-10 md:px-10 justify-between">
         <Sheet>
           <SheetTrigger asChild>
             <Button
@@ -146,42 +78,42 @@ export default function Settings() {
               </Link>
               <Link
                 href="#"
-                className="text-muted-foreground hover:text-foreground"
+                className="text-muted-foreground hover:text-foreground font-light"
               >
                 Dashboard
               </Link>
               <Link
                 href="#"
-                className="text-muted-foreground hover:text-foreground"
+                className="text-muted-foreground hover:text-foreground font-light"
               >
                 Orders
               </Link>
               <Link
                 href="#"
-                className="text-muted-foreground hover:text-foreground"
+                className="text-muted-foreground hover:text-foreground font-light"
               >
                 Products
               </Link>
               <Link
                 href="#"
-                className="text-muted-foreground hover:text-foreground"
+                className="text-muted-foreground hover:text-foreground font-light"
               >
                 Customers
               </Link>
-              <Link href="#" className="hover:text-foreground">
+              <Link href="#" className="hover:text-foreground font-light">
                 Settings
               </Link>
             </nav>
           </SheetContent>
         </Sheet>
       </header>
-      <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4  p-4 md:gap-8 md:p-10">
+      <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 p-4 md:p-10">
         <div className="mx-auto grid w-full max-w-6xl gap-2">
           <h1 className="text-3xl font-semibold">Settings</h1>
         </div>
         <div className="mx-auto grid w-full max-w-6xl items-start gap-6 md:grid-cols-[180px_1fr] lg:grid-cols-[250px_1fr]">
-          <nav className="grid gap-4 text-sm text-muted-foreground">
-            <Link href="#" className="font-semibold text-primary">
+          <nav className="grid gap-4 text-muted-foreground hover:text-foreground font-light">
+            <Link href="#" className="text-muted-foreground hover:text-foreground font-light">
               General
             </Link>
             <Link href="#">Team</Link>
@@ -190,15 +122,18 @@ export default function Settings() {
             <Card>
               <CardHeader>
                 <CardTitle>Store Name</CardTitle>
-                <CardDescription>
-                  Used to identify your store in the marketplace.
-                </CardDescription>
               </CardHeader>
               <CardContent>
-                <form onSubmit={handleUpdate} className="flex flex-col gap-4">
+                <form
+                  onSubmit={(e) => handleUpdate(e)}
+                  className="flex flex-col gap-4"
+                >
+                 <CardDescription>
+              Make changes to your account here. Click save when you're done.
+            </CardDescription>
                   <Input
                     name="firstName"
-                    className="border-blue-500 text-blue-500"
+                 //   className="border-blue-500 text-blue-500"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     placeholder={userData?.firstName || 'Enter first name'}
@@ -224,6 +159,22 @@ export default function Settings() {
                   <Button className="w-40" type="submit">Save</Button>
                 </form>
               </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Profil Avatar</CardTitle>
+                <CardDescription>
+                  The directory within your project, in which your plugins are located.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form className="flex flex-col gap-4">
+                
+                </form>
+              </CardContent>
+
+
+            
             </Card>
             <Card>
               <CardHeader>
@@ -276,22 +227,21 @@ export default function Settings() {
                     </TableRow>
                     <TableRow>
                       <TableCell>Team Name</TableCell>
-                      <TableCell>
-                        {userData.uniqID}</TableCell>
+                      <TableCell>{userData.teamName}</TableCell>
                     </TableRow>
                   </TableBody>
                 </Table>
               )}
               {error && <div className="text-red-500">{error}</div>}
               {successMessage && <div className="text-green-500">{successMessage}</div>}
-              <ModeToggle/>
+              <ModeToggle />
               <Button
-                  onClick={async () => {
-                    await signOut();
-                  }}
-                >
-                  Log Out
-                </Button>
+                onClick={async () => {
+                  await signOut();
+                }}
+              >
+                Log Out
+              </Button>
               <Button onClick={handleDeleteUser} className="mt-4 bg-red-500 text-white hover:bg-red-600">
                 Delete Account
               </Button>
