@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getOtp } from '../../../../util/otpStore';
+import { getOtp } from '../../../../utils/otpStore';
 
 export async function POST(request: Request) {
   const { phone, otp } = await request.json();

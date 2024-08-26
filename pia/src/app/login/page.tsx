@@ -6,40 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FormEvent, useState } from "react";
-import { signIn } from "next-auth/react";
+
+import { useLoginForm } from "@/hook/useUserLogin";
 
 export default function LoginForm() {
-  const [user, setUser] = useState({
-    email: '',
-    password: '',
-  });
-
-  const [error, setError] = useState('');
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    setUser((prevState) => ({
-      ...prevState,
-      [id]: value,
-    }));
-  };
-
-  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError('');
-
-    const result = await signIn('credentials', {
-      redirect: false,
-      email: user.email,
-      password: user.password,
-    });
-
-    if (result?.error) {
-      setError(result.error);
-    } else if (result?.ok) {
-      window.location.href = '/dashboard';
-    }
-  };
+  const { user, error, handleChange, handleSubmit, handleGithubLogin } = useLoginForm();
 
   return (
     <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
@@ -53,7 +24,7 @@ export default function LoginForm() {
           </div>
           <div className="grid gap-4">
             {error && <div className="text-red-500 text-center">{error}</div>}
-            <form onSubmit={onSubmit} className="grid gap-4">
+            <form onSubmit={handleSubmit} className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -86,8 +57,8 @@ export default function LoginForm() {
               <Button type="submit" className="w-full">
                 Login
               </Button>
-              <Button variant="outline" className="w-full" onClick={() => alert('Login with Google')}>
-                Login with Google
+              <Button variant="outline" className="w-full" onClick={handleGithubLogin}>
+                Login with Github
               </Button>
             </form>
             <div className="mt-4 text-center text-sm">

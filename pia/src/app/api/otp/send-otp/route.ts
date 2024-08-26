@@ -1,11 +1,9 @@
 // src/app/api/otp/send-otp/route.ts
 
 import { NextResponse } from 'next/server';
-import pool from '../../../../util/db'; // Importation par défaut de pool
+import pool from '../../../../utils/db'; // Importation par défaut de pool
 
 async function insertOtp(phone: string, otp: string, expires: number): Promise<void> {
-
-  console.log("-----------Step 1-----------")
 
   const connection = await pool.promise().getConnection();
   try {

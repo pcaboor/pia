@@ -67,3 +67,18 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .waves {
+    animation: waves 1.5s linear infinite;
+  }
+
+  @keyframes waves {
+    0% {
+      transform: translateY(-170px);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+}

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
-import pool from '../../../../util/db';
+import pool from '../../../../utils/db';
 
 // Fonction pour obtenir le token JWT de l'utilisateur
 const authenticate = async (req: Request) => {

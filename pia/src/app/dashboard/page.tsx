@@ -5,6 +5,13 @@ import { Button } from '@/components/ui/button';
 import { ArrowRightIcon, Loader2 } from 'lucide-react';
 import { useUserData } from '@/hook/useUserData';
 
+import { Heading, Paragraph, Price, PricingWrapper } from '@/components/pricing';
+import { Space_Grotesk } from 'next/font/google';
+import { Feedback } from '@/components/feedback';
+import { LightBoard } from '@/components/lightboard';
+
+const grotesk = Space_Grotesk({ subsets: ['latin'] })
+
 const DashboardHome: React.FC = () => {
   const { userData, loading } = useUserData();
 
@@ -31,6 +38,7 @@ const DashboardHome: React.FC = () => {
           capabilities like membership management, single sign-on
           configuration, and security policies.
         </p>
+        {userData.firstName}
         <div className="mt-8">
           <Link href="/dashboard/settings" className="w-full">
             <Button className="w-full">
@@ -39,9 +47,44 @@ const DashboardHome: React.FC = () => {
             </Button>
           </Link>
         </div>
+        <div className='mt-5'>
+        <Feedback />
+        </div>
       
       </div>
+    
     </div>
+    {/*
+    <div className={grotesk.className + ' h-[600px] w-full flex gap-12 items-center justify-center'}>
+   <PricingWrapper contactHref={'/'} type={'waves'}>
+      <Heading>component</Heading>
+      <Price>
+        $2000
+        <br />
+        /mo
+      </Price>
+      <Paragraph>
+        Special UI component for your website made with React.js, TailwindCSS and FramerMotion.
+      </Paragraph>
+    </PricingWrapper>
+  </div>*/ } 
+    
+    <div className="w-full bg-black">
+        <LightBoard
+          rows={10}
+          lightSize={3}
+          gap={1}
+          text="USE API QUICKLY"
+          font="default"
+          updateInterval={50}
+          colors={{
+            background: "#001a00",
+            textDim: "#006600",
+            drawLine: "#00b300",
+            textBright: "#00ff00",
+          }}
+        />
+      </div>
   </div>
   );
 };

@@ -14,6 +14,7 @@ import { ModeToggle } from "@/components/themeSwitcher";
 import { useUserPostData } from "@/hook/useUserPostData";
 import { useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import CodeBlock from "@/components/code-block";
 
 export default function Settings() {
   const {
@@ -158,6 +159,7 @@ export default function Settings() {
                   />
                   <Button className="w-40" type="submit">Save</Button>
                 </form>
+                <CodeBlock value={'const response = await fetch(`/api/user/${session.user.uniqID}`);'}/>
               </CardContent>
             </Card>
             <Card>

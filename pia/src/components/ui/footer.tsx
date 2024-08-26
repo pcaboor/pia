@@ -6,6 +6,7 @@ import { CommandDialogDemo } from '../command-dialog-menu';
 import { ModeToggle } from '../themeSwitcher';
 import { useUserData } from '@/hook/useUserData';
 
+
 const Footer = () => {
 
     const { userData, loading } = useUserData();

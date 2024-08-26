@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link';
-import { Button } from './button';
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useUserData } from '@/hook/useUserData';
 import {
@@ -8,16 +8,16 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbSeparator,
+
 } from "@/components/ui/breadcrumb"
 import { CommandDialogDemo } from '../command-dialog-menu';
-import { Loader2 } from 'lucide-react';
+
 
 const NavbarUser = () => {
   const { userData, loading } = useUserData();
   let isActive = '';
 
-  if (loading) {
+  if (loading) {  
     return 
   }
 
@@ -39,7 +39,7 @@ const NavbarUser = () => {
               </BreadcrumbItem>
                 <BreadcrumbItem>
                 <BreadcrumbLink onClick={() => handleBreadcrumbClick('/dashboard/settings')}>
-                  <Link href="/dashboard/settings">Settings</Link>
+                  <Link href="">Store</Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
              
@@ -51,9 +51,12 @@ const NavbarUser = () => {
             </BreadcrumbList>
           </Breadcrumb>
           
-          <div className="flex space-x-4  items-center">
+          <div className="flex space-x-2  items-center">
+  
           <CommandDialogDemo />
-            <Avatar>
+          <p className='text-sm font-regular'> {userData.firstName}</p>
+          <Link href={'/dashboard/settings'}>
+          <Avatar>
               {userData && userData.userImage ? (
                 <AvatarImage src={userData.userImage as string} />
               ) : (
@@ -62,6 +65,8 @@ const NavbarUser = () => {
                 </AvatarFallback>
               )}
             </Avatar>
+          </Link>
+           
           
             
           </div>

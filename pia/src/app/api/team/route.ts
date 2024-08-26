@@ -1,7 +1,5 @@
-// src/app/api/team/route.ts
-
-import { NextResponse } from 'next/server';
-import pool from '../../../util/db';
+import { NextRequest, NextResponse } from 'next/server';
+import pool from '../../../utils/db';
 import { getToken } from 'next-auth/jwt';
 
 // Fonction pour obtenir les équipes d'un utilisateur spécifique
@@ -22,7 +20,7 @@ const getTeamsForUser = async (userId: string) => {
 }; 
 
 // Fonction pour authentifier l'utilisateur
-const authenticate = async (req: Request) => {
+const authenticate = async (req: NextRequest) => {
     const token = await getToken({
         req,
         secret: process.env.NEXTAUTH_SECRET,
@@ -36,7 +34,7 @@ const authenticate = async (req: Request) => {
 };
 
 // Gestionnaire de la requête GET pour récupérer les équipes
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
     const userId = await authenticate(req);
     if (userId instanceof NextResponse) return userId;
 
@@ -61,14 +59,16 @@ const insertTeamInDB = async (teamName: string, createdBy: string, team_picture:
             VALUES (UUID(), ?, ?, NOW(), ?)
         `;
         const [result] = await connection.query(insertQuery, [teamName, createdBy, team_picture]);
-        return result.insertId;
+
+        const insertId = (result as any).insertId;
+        return insertId;
     } finally {
         connection.release();
     }
 };
 
 // Gestionnaire de la requête POST pour créer une équipe
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     const teamData = await req.json();
     
     const createdBy = await authenticate(req);
@@ -100,11 +100,11 @@ const deleteTeamInDB = async (teamID: string, userID: string) => {
         const checkQuery = `SELECT createdBy FROM teams WHERE teamID = ?`;
         const [checkResult] = await connection.query(checkQuery, [teamID]);
 
-        if (checkResult.length === 0) {
+        if ((checkResult as any).length === 0) {
             throw new Error('Team not found');
         }
 
-        const teamCreatorID = checkResult[0].createdBy;
+        const teamCreatorID = (checkResult as any)[0].createdBy;
         
         if (teamCreatorID !== userID) {
             throw new Error('Forbidden');
@@ -120,7 +120,7 @@ const deleteTeamInDB = async (teamID: string, userID: string) => {
 };
 
 // Fonction pour supprimer un utilisateur
-export async function DELETE(req: Request) {
+export async function DELETE(req: NextRequest) {
     const userId = await authenticate(req);
     if (userId instanceof NextResponse) return userId;
 
@@ -135,13 +135,17 @@ export async function DELETE(req: Request) {
         await deleteTeamInDB(teamID, userId);
         return new NextResponse('Team deleted successfully', { status: 200 });
     } catch (error) {
-        if (error.message === 'Forbidden') {
-            return new NextResponse('Forbidden', { status: 403 });
+        if (error instanceof Error) {
+            if (error.message === 'Forbidden') {
+                return new NextResponse('Forbidden', { status: 403 });
+            }
+            if (error.message === 'Team not found') {
+                return new NextResponse('Team not found', { status: 404 });
+            }
+            console.error('Error deleting team:', error);
+            return new NextResponse(error.message, { status: 500 });
         }
-        if (error.message === 'Team not found') {
-            return new NextResponse('Team not found', { status: 404 });
-        }
-        console.error('Error deleting team:', error);
+        console.error('Unexpected error:', error);
         return new NextResponse('Internal Server Error', { status: 500 });
     }
 }

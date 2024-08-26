@@ -13,13 +13,8 @@ export function useSessionTimeout() {
       }, 3600); 
 
       return () => clearTimeout(timeout);
+    } else if (status === 'unauthenticated') {
+      window.location.replace('/login');
     }
   }, [status, session]);
-
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      // Redirigez vers la page de connexion en cas de non-authentification
-      window.location.href = '/login';
-    }
-  }, [status]);
 }

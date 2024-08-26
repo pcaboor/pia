@@ -1,4 +1,4 @@
-import pool from "../util/db";
+import pool from "../utils/db";
 
 export async function insertOtp(phone: string, otp: string, expires: number): Promise<void> {
     

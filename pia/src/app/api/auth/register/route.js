@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcrypt';
-import pool from '../../../../util/db';
+import pool from '../../../../utils/db';
 
 const insertUserInDB = async (user) => {
   const connection = await pool.promise().getConnection();
