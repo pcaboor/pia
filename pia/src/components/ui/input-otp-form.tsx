@@ -16,13 +16,12 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 
+// Assurez-vous que le schéma est correct et inclut le champ email
 const FormSchema = z.object({
   pin: z.string().length(6, {
     message: "Your one-time password must be 6 characters.",
   }),
-  phone: z.string().min(10, {
-    message: "Please enter a valid phone number.",
-  }),
+  email: z.string().email("Invalid email address"), // Ajouter le champ email
   terms: z.boolean().refine(val => val === true, {
     message: "You must accept the terms and conditions",
   }),
@@ -40,18 +39,18 @@ export function InputOTPForm({ onVerificationComplete }: InputOTPFormProps) {
   const { watch, setValue } = form;
 
   const pin = watch('pin');
+  const email = watch('email'); 
   const termsAccepted = watch('terms');
 
   const handleButtonClick = async () => {
     if (pin.length === 6) {
-      const phone = watch('phone');
       try {
         const response = await fetch('/api/otp/verify-otp', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ phone, otp: pin }),
+          body: JSON.stringify({ email, otp: pin }), // Utiliser l'email ici
         });
 
         const result = await response.json();
@@ -62,7 +61,7 @@ export function InputOTPForm({ onVerificationComplete }: InputOTPFormProps) {
 
         toast({
           title: "OTP Verified!",
-          description: "Your phone number has been successfully verified.",
+          description: "Your email has been successfully verified.",
         });
         onVerificationComplete();
       } catch (error) {
@@ -106,13 +105,12 @@ export function InputOTPForm({ onVerificationComplete }: InputOTPFormProps) {
             </InputOTP>
           </FormControl>
           <FormDescription>
-            Please enter the one-time password sent to your phone.
+            Please enter the one-time password sent to your email.
           </FormDescription>
           <Button
             type="button"
             className="w-full"
             onClick={handleButtonClick}
-           
           >
             Verify account
           </Button>

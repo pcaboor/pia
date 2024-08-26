@@ -1,15 +1,15 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getOtp } from '../../../../utils/otpStore';
 
-export async function POST(request: Request) {
-  const { phone, otp } = await request.json();
+export async function POST(request: NextRequest) {
+  const { email, otp } = await request.json();
 
-  if (!phone || !otp) {
-    return NextResponse.json({ message: 'Phone number and OTP are required' }, { status: 400 });
+  if (!email || !otp) {
+    return NextResponse.json({ message: 'Email and OTP are required' }, { status: 400 });
   }
 
   try {
-    const storedOtp = await getOtp(phone);
+    const storedOtp = await getOtp(email); // Utiliser des e-mails
 
     if (!storedOtp) {
       return NextResponse.json({ message: 'Invalid OTP' }, { status: 400 });

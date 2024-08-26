@@ -15,6 +15,7 @@ import { useUserPostData } from "@/hook/useUserPostData";
 import { useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import CodeBlock from "@/components/code-block";
+import { useUserData } from "@/hook/useUserData";
 
 export default function Settings() {
   const {
@@ -35,6 +36,7 @@ export default function Settings() {
     fetchUserData,
   } = useUserPostData();
 
+ // const { userData, loading } = useUserData();
   const { toast } = useToast();
   const router = useRouter();
 
@@ -151,6 +153,7 @@ export default function Settings() {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder={userData?.email || 'Enter email'}
                   />
+                 
                   <Input
                     name="teamName"
                     value={teamName}
@@ -174,9 +177,6 @@ export default function Settings() {
                 
                 </form>
               </CardContent>
-
-
-            
             </Card>
             <Card>
               <CardHeader>

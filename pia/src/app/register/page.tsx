@@ -15,13 +15,11 @@ import { SeparatorDemo } from '@/components/ui/message-profil-type';
 import { InputOTPForm } from '@/components/ui/input-otp-form';
 import { toast } from '@/components/ui/use-toast';
 import { Checkbox } from '@/components/ui/checkbox';
-import { PhoneInput } from '@/components/phone-input';
+// Supprimer l'importation de PhoneInput
+// import { PhoneInput } from '@/components/phone-input';
 import { useUserRegister } from '@/hook/useUserRegister';
 
-
-
 export default function RegisterForm() {
- 
   const {
     form,
     step,
@@ -48,7 +46,7 @@ export default function RegisterForm() {
 
           <FormProvider {...form}>
             <form className="grid gap-4">
-              {error && <div className="text-red-500 text-center">{error}</div>}
+              {error && <div className="text-red-500 text-center mb-4">{error}</div>}
 
               {step === 'personal' && (
                 <>
@@ -63,15 +61,18 @@ export default function RegisterForm() {
                     </div>
                   </div>
 
-                  <Select onValueChange={handleCompanyChange} value={watch('company')}>
-                    <SelectTrigger className="border-blue-500 text-blue-500">
-                      <SelectValue placeholder="Select Company Type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="personal">Personal</SelectItem>
-                      <SelectItem value="business">Business</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="mt-4">
+                    <Label htmlFor="company">Company Type</Label>
+                    <Select onValueChange={handleCompanyChange} value={watch('company')}>
+                      <SelectTrigger className="border-blue-500 text-blue-500">
+                        <SelectValue placeholder="Select Company Type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="personal">Personal</SelectItem>
+                        <SelectItem value="business">Business</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
 
                   {watch('company') === 'business' && (
                     <div className="grid gap-2 mt-4">
@@ -100,10 +101,10 @@ export default function RegisterForm() {
                     <Label htmlFor="password">Password</Label>
                     <Input id="password" type="password" {...form.register("password")} placeholder="••••••••" />
                   </div>
-                  <div className="flex items-end gap-4">
+                  <div className="flex items-end gap-4 mt-4">
                     <div className="flex flex-col w-full max-w-sm gap-1.5">
                       <Label htmlFor="userImage">Profile Picture</Label>
-                      <Input id="userImage"  type="file" accept="image/*" onChange={handleFileChange} />
+                      <Input id="userImage" type="file" accept="image/*" onChange={handleFileChange} />
                     </div>
                     <div className="flex items-end">
                       <Avatar>
@@ -125,29 +126,10 @@ export default function RegisterForm() {
                 </>
               )}
 
-              {step === 'phone' && (
-                <div className="grid gap-2">
-                  <Label htmlFor="phone">Phone number</Label>
-                  <Controller
-                    name="phone"
-                    control={form.control}
-                    render={({ field }) => (
-                      <PhoneInput
-                        {...field}
-                        id="phone"
-                        placeholder="123-456-7890"
-                        value={field.value} // Associe la valeur du téléphone à celle du formulaire
-                        onChange={(value) => field.onChange(value)} // Utilisation de l'onChange du formulaire
-                      />
-                    )}
-                  />
-                </div>
-              )}
-
               {step === 'otp' && (
                 <>
                   <InputOTPForm onVerificationComplete={handleVerificationComplete} />
-                  <div className="items-top flex space-x-2">
+                  <div className="items-top flex space-x-2 mt-4">
                     <Checkbox id="terms" {...form.register("terms")} />
                     <div className="grid gap-1.5 leading-none">
                       <label htmlFor="terms" className="text-sm font-medium">
@@ -163,15 +145,15 @@ export default function RegisterForm() {
 
               <Button
                 type="button"
-                className={`w-full ${isStepComplete[step as keyof typeof isStepComplete] ? '' : 'opacity-50 cursor-not-allowed'}`}
+                className={`w-full ${isStepComplete[step as keyof typeof isStepComplete] ? '' : 'opacity-50 cursor-not-allowed'} mt-4`}
                 onClick={handleNext}
                 disabled={!isStepComplete[step as keyof typeof isStepComplete]}
               >
-                Continue
+                {step === 'email' ? 'Verify Email' : 'Continue'}
               </Button>
 
               {step !== 'personal' && (
-                <Button variant="outline" type="button" className="w-full" onClick={handleBack}>
+                <Button variant="outline" type="button" className="w-full mt-2" onClick={handleBack}>
                   Back
                 </Button>
               )}

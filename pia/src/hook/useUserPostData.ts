@@ -1,6 +1,6 @@
-import { signOut, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useState, useEffect, useCallback } from "react";
+import { signOut, useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useState, useEffect, useCallback } from 'react';
 
 export const useUserPostData = () => {
     const { data: session, status } = useSession();
@@ -11,7 +11,6 @@ export const useUserPostData = () => {
     const [lastName, setLastName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [teamName, setTeamName] = useState<string>('');
-
     const [successMessage, setSuccessMessage] = useState<string>('');
 
     const fetchUserData = useCallback(async () => {
@@ -32,15 +31,8 @@ export const useUserPostData = () => {
     }, [session?.user?.uniqID]);
 
     useEffect(() => {
-        if (status === 'loading') return;
-
-        if (status === 'unauthenticated') {
-            router.push('/login');
-            return;
-        }
-
         fetchUserData();
-    }, [status, fetchUserData, router]);
+    }, [fetchUserData]);
 
     const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();

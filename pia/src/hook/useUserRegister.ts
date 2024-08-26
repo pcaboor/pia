@@ -1,9 +1,9 @@
-// hooks/useUserRegister.ts
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from '@/components/ui/use-toast';
+import { signIn } from 'next-auth/react';
 
 const FormSchema = z.object({
   teamName: z.string().optional(),
@@ -11,7 +11,6 @@ const FormSchema = z.object({
   lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(8, "Password must be at least 8 characters long"),
-  phone: z.string().min(10, "Invalid phone number"),
   company: z.string().min(1, "Company type is required"),
   pin: z.string().length(6, "OTP must be 6 characters long").optional(),
   terms: z.boolean().refine(val => val === true, "You must accept the terms and conditions"),
@@ -21,8 +20,13 @@ const FormSchema = z.object({
   path: ["teamName"],
 });
 
+interface User {
+  email: string;
+  password: string;
+}
+
 type FormData = z.infer<typeof FormSchema>;
-type Step = 'personal' | 'account' | 'phone' | 'otp';
+type Step = 'personal' | 'account' | 'email' | 'otp'; // Ajout de 'email'
 
 export const useUserRegister = () => {
   const [step, setStep] = useState<Step>('personal');
@@ -34,7 +38,7 @@ export const useUserRegister = () => {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       firstName: '', lastName: '', email: '', password: '', teamName: '', userImage: '',
-      phone: '', company: '', pin: '', terms: false,
+      company: '', pin: '', terms: false,
     },
   });
 
@@ -77,7 +81,7 @@ export const useUserRegister = () => {
   const isStepComplete = {
     personal: watch('firstName') && watch('lastName') && watch('company') && (watch('company') !== 'business' || watch('teamName')),
     account: watch('email') && watch('password'),
-    phone: watch('phone'),
+    email: watch('email'), // Nouvelle étape 'email'
     otp: watch('pin')?.length === 6 && watch('terms'),
   };
 
@@ -87,29 +91,39 @@ export const useUserRegister = () => {
       return;
     }
     setError('');
-    if (step === 'phone') {
+
+    if (step === 'email') {
       try {
+        const email = watch('email');
+        console.log("Sending OTP to:", email);
+        
         const response = await fetch('/api/otp/send-otp', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ phone: watch('phone') }),
+          body: JSON.stringify({ email }), // Utiliser l'email ici
         });
-        if (!response.ok) throw new Error('Failed to send OTP');
-        setStep('otp');
+        
+        if (!response.ok) {
+          console.log("Failed to send OTP:", await response.text());
+          throw new Error('Failed to send OTP');
+        }
+        
+        setStep('otp'); // Passer à l'étape OTP après l'envoi
       } catch (error) {
+        console.error("Error during OTP sending:", error);
         setError('An error occurred while sending OTP');
       }
     } else {
-      setStep(step === 'personal' ? 'account' : 'phone');
+      setStep(step === 'personal' ? 'account' : step === 'account' ? 'email' : 'otp'); // Mettre à jour les étapes
     }
   };
 
   const handleBack = () => {
-    setStep(step === 'account' ? 'personal' : step === 'phone' ? 'account' : 'phone');
+    setStep(step === 'account' ? 'personal' : step === 'email' ? 'account' : 'email');
   };
 
   const handleVerificationComplete = async () => {
-    const { pin, phone, ...userData } = form.getValues();
+    const { pin, email, ...userData } = form.getValues();
     if (!pin || pin.length !== 6) {
       setError('Please enter a valid OTP.');
       return;
@@ -118,14 +132,26 @@ export const useUserRegister = () => {
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...userData, pin, phone }),
+        body: JSON.stringify({ ...userData, pin, email }), // Utiliser l'email ici
       });
       if (!response.ok) throw new Error('Registration failed');
       toast({
         title: "Registration Successful!",
         description: "Your account has been created successfully.",
       });
-      window.location.replace('/login');
+
+      // Sign in the user
+      const result = await signIn('credentials', {
+        redirect: false,
+        email: email,
+        password: userData.password,
+      });
+
+      if (result?.error) {
+        setError(result.error);
+      } else if (result?.ok) {
+        window.location.replace('/dashboard'); // Redirect to dashboard
+      }
     } catch (error) {
       toast({
         title: "Error",

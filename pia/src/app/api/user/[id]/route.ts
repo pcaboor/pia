@@ -1,9 +1,9 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import pool from '../../../../utils/db';
 
 // Fonction pour obtenir le token JWT de l'utilisateur
-const authenticate = async (req: Request) => {
+const authenticate = async (req: NextRequest) => {
     const token = await getToken({
         req,
         secret: process.env.NEXTAUTH_SECRET,
@@ -17,7 +17,7 @@ const authenticate = async (req: Request) => {
 };
 
 // Fonction pour obtenir les données utilisateur
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
     const userId = await authenticate(req);
     if (userId instanceof NextResponse) return userId;
 
@@ -30,11 +30,11 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
         const query = 'SELECT * FROM users WHERE uniqID = ?';
         const [results] = await pool.promise().query(query, [id]);
 
-        if (results.length === 0) {
+        if ((results as any).length === 0) {
             return new NextResponse('User not found', { status: 404 });
         }
 
-        return new NextResponse(JSON.stringify(results[0]), { status: 200 });
+        return new NextResponse(JSON.stringify((results as any)[0]), { status: 200 });
     } catch (error) {
         console.error('Error fetching user data:', error);
         return new NextResponse('Internal Server Error', { status: 500 });
@@ -42,7 +42,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
 }
 
 // Fonction pour mettre à jour les données utilisateur
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
     const userId = await authenticate(req);
     if (userId instanceof NextResponse) return userId;
 
@@ -64,7 +64,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     try {
         const [results] = await pool.promise().query(query, [firstName, lastName, email, teamName, id]);
 
-        if (results.affectedRows === 0) {
+        if ((results as any).affectedRows === 0) {
             return new NextResponse('User not found', { status: 404 });
         }
 
@@ -76,7 +76,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 }
 
 // Fonction pour supprimer un utilisateur
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
     const userId = await authenticate(req);
     if (userId instanceof NextResponse) return userId;
 
@@ -90,7 +90,7 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
     try {
         const [results] = await pool.promise().query(query, [id]);
 
-        if (results.affectedRows === 0) {
+        if ((results as any).affectedRows === 0) {
             return new NextResponse('User not found', { status: 404 });
         }
 

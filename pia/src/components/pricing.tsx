@@ -22,8 +22,8 @@ const Wave = () => (
 
 const Cross = () => (
   <svg
-    width="130"
-    height="130"
+    width="90"
+    height="90"
     viewBox="0 0 130 130"
     fill="none"
     className={'scale-125'}
@@ -41,7 +41,7 @@ export const PricingWrapper: React.FC<{
 }> = ({ children, contactHref, className, type = 'waves' }) => (
   <article
     className={cn(
-      'min-h-[300px] h-[600px] max-h-[500px] max-w-sm w-full bg-purple-500 relative overflow-hidden rounded-2xl text-white',
+      'min-h-[50px] h-[300px] max-h-[250px] max-w-sm w-full bg-purple-500 relative overflow-hidden rounded-2xl text-white',
       className
     )}
   >
@@ -95,7 +95,7 @@ export const Heading: React.FC<{ children: React.ReactNode; className?: string }
   children,
   className
 }) => (
-  <h1 className={cn('sm:text-5xl leading-[1] text-[clamp(1.7rem,10vw,3rem)] font-bold', className)}>
+  <h1 className={cn('sm:text-xl leading-[1] text-[clamp(1.7rem,10vw,3rem)] font-bold', className)}>
     {children}
   </h1>
 )
@@ -106,7 +106,7 @@ export const Price: React.FC<{ children: React.ReactNode; className?: string }> 
 }) => (
   <div
     style={{ lineHeight: '1' }}
-    className={cn('sm:text-5xl text-[clamp(1.7rem,10vw,3rem)] font-bold', className)}
+    className={cn('sm:text-xl text-[clamp(1.7rem,10vw,3rem)] font-light', className)}
   >
     {children}
   </div>
@@ -116,7 +116,7 @@ export const Paragraph: React.FC<{ children: React.ReactNode; className?: string
   children,
   className
 }) => (
-  <p className={cn('sm:text-2xl text-[clamp(0.1rem,20vw,1.25rem)] font-bold', className)}>
+  <p className={cn('sm:text-sm text-[clamp(0.1rem,20vw,1.25rem)] font-light', className)}>
     {children}
   </p>
 )
