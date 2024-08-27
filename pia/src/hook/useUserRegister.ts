@@ -23,6 +23,8 @@ const FormSchema = z.object({
 interface User {
   email: string;
   password: string;
+  // A vérifier
+  handleFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 type FormData = z.infer<typeof FormSchema>;
@@ -53,23 +55,32 @@ export const useUserRegister = () => {
         : '');
   };
 
-  const handleFileChange = (file: File | null) => {
-    if (file) {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files ? event.target.files[0] : null;
+    if (file && file instanceof File) {
       if (file.size > 1 * 1024 * 1024) {
         setError('File size exceeds 1 MB');
         return;
       }
-      if (!file.type.startsWith('image/')) {
-        setError('Invalid file type. Please upload an image.');
+      
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
+      if (!allowedTypes.includes(file.type)) {
+        setError('Invalid file type. Please upload a valid image file.');
         return;
       }
+      
       const reader = new FileReader();
       reader.onloadend = () => {
         const imageUrl = reader.result as string;
         setProfileImage(imageUrl);
         setValue('userImage', imageUrl);
       };
+      reader.onerror = () => {
+        setError('Error reading file');
+      };
       reader.readAsDataURL(file);
+    } else {
+      setError('Invalid file');
     }
   };
 
@@ -96,18 +107,18 @@ export const useUserRegister = () => {
       try {
         const email = watch('email');
         console.log("Sending OTP to:", email);
-        
+
         const response = await fetch('/api/otp/send-otp', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email }), // Utiliser l'email ici
         });
-        
+
         if (!response.ok) {
           console.log("Failed to send OTP:", await response.text());
           throw new Error('Failed to send OTP');
         }
-        
+
         setStep('otp'); // Passer à l'étape OTP après l'envoi
       } catch (error) {
         console.error("Error during OTP sending:", error);

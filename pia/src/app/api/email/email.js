@@ -13,7 +13,7 @@ export default async function sendEmail(otp, email, name) {
             {
                 From: {
                     Email: 'pa.devcode@gmail.com',
-                    Name: 'Your Name'
+                    Name: 'Buster'
                 },
                 To: [
                     {
@@ -21,9 +21,13 @@ export default async function sendEmail(otp, email, name) {
                         Name: name
                     }
                 ],
-                Subject: 'Your OTP Code',
+                Subject: 'Account verify',
                 TextPart: `Your OTP code is ${otp}`,
-                HTMLPart: `<h3>Your OTP code is ${otp}</h3>`
+                HTMLPart: `
+                 <h1>You sended a request</h1>
+                 <h3>This code is private</h3>
+                <span>Your OTP code is ${otp}</span>
+                `
             }
         ]
     };

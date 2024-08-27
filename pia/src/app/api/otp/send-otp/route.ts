@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
 
     // Envoi de l'OTP par e-mail
     
-    await sendEmail(otp, email, 'User'); // Nom de l'utilisateur à personnaliser
+   // await sendEmail(otp, email, 'User'); // Nom de l'utilisateur à personnaliser
     
     const emailResult = await sendEmail(otp, email, 'User'); // Nom de l'utilisateur à personnaliser
     console.log("Email sent:", emailResult);

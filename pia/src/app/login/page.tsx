@@ -9,6 +9,14 @@ import { FormEvent, useState } from "react";
 
 import { useLoginForm } from "@/hook/useUserLogin";
 
+import { Space_Grotesk } from 'next/font/google';
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+});
+
+
 export default function LoginForm() {
   const { user, error, handleChange, handleSubmit, handleGithubLogin } = useLoginForm();
 
@@ -17,7 +25,9 @@ export default function LoginForm() {
       <div className="flex items-center justify-center py-12">
         <div className="mx-auto grid w-[350px] gap-6">
           <div className="grid gap-2 text-center">
-            <h1 className="text-3xl font-bold">Login</h1>
+          <h1 className="text-3xl font-bold">
+      Login to <span className={spaceGrotesk.className}>Buster</span>
+    </h1>
             <p className="text-muted-foreground">
               Enter your email below to login to your account
             </p>
@@ -70,13 +80,13 @@ export default function LoginForm() {
           </div>
         </div>
       </div>
-      <div className="hidden bg-muted lg:block">
+      <div className="hidden lg:block lg:relative lg:w-full lg:h-full">
         <Image
-          src="/placeholder.svg"
-          alt="Image"
-          width="1920"
-          height="1080"
-          className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+          src="https://i.pinimg.com/564x/20/c6/e7/20c6e7e27341a9a09c00821a99cfb17a.jpg"
+          alt="Login background"
+          layout="fill"
+          objectFit="cover"
+          className="dark:brightness-[0.2] dark:grayscale"
         />
       </div>
     </div>

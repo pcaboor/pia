@@ -1,7 +1,7 @@
 'use client';
 
 import Link from "next/link";
-import { Loader2, Menu, Package2 } from "lucide-react";
+import { ArrowRightIcon, Badge, Loader2, Menu, Package2 } from "lucide-react";
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,10 @@ import { useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import CodeBlock from "@/components/code-block";
 import { useUserData } from "@/hook/useUserData";
+import { CarouselSpacing } from "@/components/carrousel";
+import { Feedback } from "@/components/feedback";
+import { Paragraph } from "@/components/pricing";
+import email from "next-auth/providers/email";
 
 export default function Settings() {
   const {
@@ -36,15 +40,15 @@ export default function Settings() {
     fetchUserData,
   } = useUserPostData();
 
- // const { userData, loading } = useUserData();
+  // const { userData, loading } = useUserData();
   const { toast } = useToast();
   const router = useRouter();
 
   useEffect(() => {
     if (successMessage) {
       toast({ description: "Settings updated successfully!" });
-      fetchUserData(); 
-     
+      fetchUserData();
+
     }
   }, [successMessage, fetchUserData, toast]);
 
@@ -57,200 +61,109 @@ export default function Settings() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <header className="flex h-16 gap-4 px-10 md:px-10 justify-between">
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button
-              variant="outline"
-              size="icon"
-              className="shrink-0 md:hidden"
-            >
-              <Menu className="h-5 w-5" />
-              <span className="sr-only">Toggle navigation menu</span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left">
-            <nav className="grid gap-6 text-lg font-medium">
-              <Link
-                href="#"
-                className="flex items-center gap-2 text-lg font-semibold"
-              >
-                <Package2 className="h-6 w-6" />
-                <span className="sr-only">Acme Inc</span>
-              </Link>
-              <Link
-                href="#"
-                className="text-muted-foreground hover:text-foreground font-light"
-              >
-                Dashboard
-              </Link>
-              <Link
-                href="#"
-                className="text-muted-foreground hover:text-foreground font-light"
-              >
-                Orders
-              </Link>
-              <Link
-                href="#"
-                className="text-muted-foreground hover:text-foreground font-light"
-              >
-                Products
-              </Link>
-              <Link
-                href="#"
-                className="text-muted-foreground hover:text-foreground font-light"
-              >
-                Customers
-              </Link>
-              <Link href="#" className="hover:text-foreground font-light">
-                Settings
-              </Link>
-            </nav>
-          </SheetContent>
-        </Sheet>
-      </header>
-      <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 p-4 md:p-10">
-        <div className="mx-auto grid w-full max-w-6xl gap-2">
-          <h1 className="text-3xl font-semibold">Settings</h1>
-        </div>
-        <div className="mx-auto grid w-full max-w-6xl items-start gap-6 md:grid-cols-[180px_1fr] lg:grid-cols-[250px_1fr]">
-          <nav className="grid gap-4 text-muted-foreground hover:text-foreground font-light">
-            <Link href="#" className="text-muted-foreground hover:text-foreground font-light">
-              General
-            </Link>
-            <Link href="#">Team</Link>
-          </nav>
-          <div className="grid gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Store Name</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <form
-                  onSubmit={(e) => handleUpdate(e)}
-                  className="flex flex-col gap-4"
-                >
-                 <CardDescription>
-              Make changes to your account here. Click save when you're done.
-            </CardDescription>
-                  <Input
-                    name="firstName"
-                 //   className="border-blue-500 text-blue-500"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    placeholder={userData?.firstName || 'Enter first name'}
-                  />
-                  <Input
-                    name="lastName"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    placeholder={userData?.lastName || 'Enter last name'}
-                  />
-                  <Input
-                    name="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder={userData?.email || 'Enter email'}
-                  />
-                 
-                  <Input
-                    name="teamName"
-                    value={teamName}
-                    onChange={(e) => setTeamName(e.target.value)}
-                    placeholder={userData?.teamName || 'Enter team name'}
-                  />
-                  <Button className="w-40" type="submit">Save</Button>
-                </form>
-              
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle>Profil Avatar</CardTitle>
-                <CardDescription>
-                  The directory within your project, in which your plugins are located.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form className="flex flex-col gap-4">
-                
-                </form>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle>Plugins Directory</CardTitle>
-                <CardDescription>
-                  The directory within your project, in which your plugins are located.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form className="flex flex-col gap-4">
-                  <Input
-                    placeholder="Project Name"
-                    defaultValue="/content/plugins"
-                  />
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="include" defaultChecked />
-                    <label
-                      htmlFor="include"
-                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      Allow administrators to change the directory.
-                    </label>
-                  </div>
-                </form>
-              </CardContent>
-              <CardFooter className="border-t px-6 py-4">
-                <Button>Save</Button>
-              </CardFooter>
-              {userData && (
-                <Table>
-                  <TableCaption>Your data</TableCaption>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Field</TableHead>
-                      <TableHead>Value</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell>First Name</TableCell>
-                      <TableCell className="text-blue-500">{userData.firstName}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>Last Name</TableCell>
-                      <TableCell>{userData.lastName}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>Email</TableCell>
-                      <TableCell>{userData.email}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>Team Name</TableCell>
-                      <TableCell>{userData.teamName}</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              )}
-              {error && <div className="text-red-500">{error}</div>}
-              {successMessage && <div className="text-green-500">{successMessage}</div>}
-              <ModeToggle />
-              <Button
-                onClick={async () => {
-                  await signOut();
-                }}
-              >
-                Log Out
-              </Button>
-              <Button onClick={handleDeleteUser} className="mt-4 bg-red-500 text-white hover:bg-red-600">
-                Delete Account
-              </Button>
-            </Card>
+    <div className="flex flex-1 flex-grow flex-col ">
+
+      {/* Responsive container */}
+      <div className="flex flex-col md:flex-row gap-6 m-10">
+        {/* First Block */}
+        <div className="flex flex-1 rounded-2xl bg-muted/50 p-7 text-left">
+          <div className="flex-col gap-1">
+            <div className="flex items-center">
+              <h3 className="text-2xl font-bold tracking-tight mr-2">Welcome</h3>
+
+            </div>
+            <p className="mt-3 text-muted-foreground text-[12px]">
+              This reference app demonstrates how to build a multi-tenant B2B SaaS
+              application powered by Auth0 by Okta.
+            </p>
+            <form
+            onSubmit={(e) => handleUpdate(e)}
+            className="flex flex-col gap-4 text-[12px]"
+          >
+            
+            <Input
+            className="text-[12px]"
+              name="firstName"
+              //   className="border-blue-500 text-blue-500"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              placeholder={userData?.firstName || 'Enter first name'}
+            />
+            <Input
+                className="text-[12px]"
+              name="lastName"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              placeholder={userData?.lastName || 'Enter last name'}
+            />
+            <Input
+                className="text-[12px]"
+              name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder={userData?.email || 'Enter email'}
+            />
+
+            <Input
+                className="text-[12px]"
+              name="teamName"
+              value={teamName}
+              onChange={(e) => setTeamName(e.target.value)}
+              placeholder={userData?.teamName || 'Enter team name'}
+            />
+            <Button className="w-14" type="submit">Save</Button>
+          </form>
+
           </div>
         </div>
-      </main>
+
+        {/* Second Block */}
+        <div className="flex flex-1 rounded-2xl bg-muted/50 p-7 text-left">
+          <div className="flex-col gap-1">
+            <div className="flex items-center">
+              <h3 className="text-2xl font-bold tracking-tight mr-2">API Store</h3>
+
+            </div>
+
+
+            <p className="mt-3 text-muted-foreground text-xs">
+              This reference app demonstrates how to build a multi-tenant B2B SaaS
+              application powered by Auth0 by Okta.
+            </p>
+            <p className="mt-3 text-muted-foreground text-xs">
+              Head over to the Settings Dashboard to explore common administrative
+              capabilities like membership management, single sign-on
+              configuration, and security policies.
+            </p>
+           
+
+
+            <div className="mt-8">
+              <Link href="/dashboard/settings" className="w-full">
+                <Button className="w-full">
+                  Navigate to Settings
+                  <ArrowRightIcon className="ml-2 size-4" />
+                </Button>
+              </Link>
+              <Button
+          onClick={async () => {
+            await signOut();
+          }}
+        >
+          Log Out
+        </Button>
+        <Button onClick={handleDeleteUser} className="mt-4 bg-red-500 text-white hover:bg-red-600">
+          Delete Account
+        </Button>
+            </div>
+            <div className="mt-5">
+
+            </div>
+          </div>
+        </div>
+      </div>     
+     
     </div>
   );
-}
+};
+
