@@ -20,12 +20,12 @@ function CodeBlock({
     <pre
       style={{ maxHeight: "500px", overflowY: "auto" }}
       className={cn(
-        `} relative h-full w-full whitespace-pre-wrap rounded-lg border bg-zinc-950 p-4 text-sm text-white/75
+        `} relative h-full w-full whitespace-pre-wrap rounded-lg border bg-grey-200 p-4 text-xs text-dark/75
           dark:bg-zinc-800 `,
         className,
       )}
     >
-      <CopyButton value={value} copyable={copyable} />
+      <CopyButton  value={value} copyable={copyable} />
       {value}
     </pre>
   );

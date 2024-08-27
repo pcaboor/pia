@@ -11,6 +11,7 @@ import {
 
 } from "@/components/ui/breadcrumb"
 import { CommandDialogDemo } from '../command-dialog-menu';
+import { Home } from 'lucide-react';
 
 
 const NavbarUser = () => {
@@ -21,42 +22,17 @@ const NavbarUser = () => {
     return 
   }
 
-  const handleBreadcrumbClick = (href: string) => {
-    isActive = href;
-  };
-
   return (
     <>
-      <nav className=" p-4">
-        
-        <div className="container mx-auto flex justify-between items-center">
-          <Breadcrumb>
-            <BreadcrumbList>  
-              <BreadcrumbItem>
-                <BreadcrumbLink onClick={() => handleBreadcrumbClick('/dashboard')}>
-                  <Link href="/dashboard">Home</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-                <BreadcrumbItem>
-                <BreadcrumbLink onClick={() => handleBreadcrumbClick('/dashboard/settings')}>
-                  <Link href="">Store</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-             
-              <BreadcrumbItem>
-                <BreadcrumbLink onClick={() => handleBreadcrumbClick('/dashboard/team')}>
-                  <Link href="/dashboard/team">Team</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-          
+        <div className=" flex justify-between items-center p-4 bg-muted/40">
+        <div className='flex font-bold'>
+        Buster
+        </div>
           <div className="flex space-x-2  items-center">
-  
           <CommandDialogDemo />
           <p className='text-sm font-regular'> {userData.firstName}</p>
           <Link href={'/dashboard/settings'}>
-          <Avatar>
+          <Avatar className='h-7 w-7'>
               {userData && userData.userImage ? (
                 <AvatarImage src={userData.userImage as string} />
               ) : (
@@ -71,7 +47,7 @@ const NavbarUser = () => {
             
           </div>
         </div>
-      </nav>
+      
      
     </>
   );

@@ -26,7 +26,7 @@ import { useTeamCreate } from "@/hook/useTeamCreate";
 import { useUserData } from "@/hook/useUserData";
 
 
-export default function TeamsPage() {
+export default function ApiKeysPage() {
     const teamCreate = useTeamCreate();
     const { userData } = useUserData();
 
@@ -54,35 +54,13 @@ export default function TeamsPage() {
 
     return (
         <div className="flex min-h-screen w-full flex-col">
-            <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
-                <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
-                    <Link href="#" className="flex items-center gap-2 text-lg font-semibold md:text-base">
-                        <Users2 className="h-6 w-6" />
-                        <span className="sr-only">Acme Inc</span>
-                    </Link>
-                    <Link href="#" className="text-muted-foreground transition-colors hover:text-foreground">
-                        Dashboard
-                    </Link>
-                    <Link href="#" className="text-muted-foreground transition-colors hover:text-foreground">
-                        Orders
-                    </Link>
-                    <Link href="#" className="text-muted-foreground transition-colors hover:text-foreground">
-                        Products
-                    </Link>
-                    <Link href="#" className="text-muted-foreground transition-colors hover:text-foreground">
-                        Customers
-                    </Link>
-                    <Link href="#" className="text-foreground transition-colors hover:text-foreground">
-                        Settings
-                    </Link>
-                </nav>
-
-            </header>
+        
             <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 p-4 md:gap-8 md:p-10">
                 <div className="mx-auto grid w-full max-w-6xl gap-2">
                     <h1 className="text-3xl font-semibold">Teams</h1>
                 </div>
                 <div className="mx-auto grid w-full max-w-6xl items-start gap-6 md:grid-cols-[180px_1fr] lg:grid-cols-[250px_1fr]">
+                   {/*
                     <nav className="grid gap-4 text-sm text-muted-foreground">
                         <Link href="#" className="font-semibold text-primary">
                             General
@@ -94,21 +72,13 @@ export default function TeamsPage() {
                         <Link href="#" className="text-sm text-muted-foreground hover:text-foreground font-light">Advanced</Link>
 
                     </nav>
+                   */} 
                     <div className="grid gap-6">
 
                         <Card className="border-none shadow-none">
                             <CardHeader>
 
                                 <div className="flex items-center justify-between">
-
-                                    <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
-                                        <form className="ml-auto flex-1 ">
-                                            <div className="relative">
-                                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                                                <Input type="search" placeholder="Search teams..." className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]" />
-                                            </div>
-                                        </form>
-                                    </div>
                                     <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
                                         <AlertDialogTrigger asChild>
                                             <Button onClick={() => setDialogOpen(true)} className="text-sm">

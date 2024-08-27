@@ -162,7 +162,7 @@ export default function Settings() {
                   />
                   <Button className="w-40" type="submit">Save</Button>
                 </form>
-                <CodeBlock value={'const response = await fetch(`/api/user/${session.user.uniqID}`);'}/>
+              
               </CardContent>
             </Card>
             <Card>
