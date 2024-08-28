@@ -11,6 +11,7 @@ import {
   Menu,
   Package,
   Package2,
+  Search,
   ShoppingCart,
   Store,
   User,
@@ -29,7 +30,9 @@ import TeamsPage from "./team/page"
 import ApiKeysPage from "./team/page"
 import DocumentationMain from "@/components/documentationMain"
 import Settings from "./settings/page"
-import StorePage from "../apistore/page"
+import SearchBar from "@/components/search/search"
+
+
 
 export function Dashboard() {
 
@@ -46,7 +49,7 @@ export function Dashboard() {
         case "APIStore":
         return 
         case "Pricing":
-        return <StorePage/>
+        return <SearchBar/>
         case "Account":
           return <Settings/>
       case "Documentation":

@@ -24,6 +24,7 @@ import { Button } from '@/components/ui/button';
 import { signOut } from 'next-auth/react';
 
 import { Space_Grotesk } from 'next/font/google';
+import SearchBar from '../search/search';
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
@@ -43,7 +44,8 @@ const NavbarUser = () => {
       <span className={spaceGrotesk.className}>Buster</span>
     </h1>
       <div className="flex space-x-2 items-center">
-        <CommandDialogDemo />
+        <SearchBar/>
+      {/* <CommandDialogDemo /> */} 
         <p className='text-sm font-regular'>{userData.firstName}</p>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

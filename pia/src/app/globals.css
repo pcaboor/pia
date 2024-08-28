@@ -67,6 +67,10 @@
     @apply bg-background text-foreground;
   }
 }
+.placeholder-mono::placeholder {
+  font-family: "Courier New", Courier, monospace;
+}
+
 
 @layer utilities {
   .waves {
