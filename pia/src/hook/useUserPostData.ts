@@ -39,7 +39,7 @@ export const useUserPostData = () => {
         setError('');
         setSuccessMessage('');
         try {
-            const response = await fetch(`/api/user/${userData?.id}`, {
+            const response = await fetch(`/api/user/${userData?.uniqID}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -56,9 +56,9 @@ export const useUserPostData = () => {
     };
 
     const handleDeleteUser = async () => {
-        if (userData?.id) {
+        if (userData?.uniqID) {
             try {
-                const response = await fetch(`/api/user/${userData.id}`, {
+                const response = await fetch(`/api/user/${userData.uniqID}`, {
                     method: 'DELETE',
                 });
                 if (!response.ok) throw new Error('Failed to delete user');
