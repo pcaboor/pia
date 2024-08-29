@@ -1,4 +1,3 @@
-// hooks/useUserData.ts
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
@@ -11,29 +10,48 @@ export const useUserData = () => {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    if (status === 'loading') return;
+    // Gestion du cas où la session est encore en cours de chargement
+    if (status === 'loading') {
+      return;
+    }
 
+    // Redirection pour les utilisateurs non authentifiés
     if (status === 'unauthenticated') {
       router.push('/login');
       return;
     }
 
+    // Fonction pour récupérer les données de l'utilisateur
     const fetchUserData = async () => {
-      if (session?.user?.uniqID) {
+      if (session?.user?.id) {
         try {
-          const response = await fetch(`/api/user/${session.user.uniqID}`);
-          if (!response.ok) throw new Error('Failed to fetch user data');
+          console.log(session.user.id)
+          const response = await fetch(`/api/user/${session.user.id}`);
+
+          // Gestion des réponses non réussies
+          if (!response.ok) {
+            if (response.status === 404) {
+              setError('User not found');
+            } else {
+              setError('Failed to fetch user data');
+            }
+            return;
+          }
+
+          // Extraction des données utilisateur
           const data = await response.json();
           setUserData(data);
         } catch (error) {
           setError('Failed to load user data');
         }
+      } else {
+        setError('No user ID found');
       }
       setLoading(false);
     };
 
     fetchUserData();
-  }, [status, session?.user?.uniqID, router]);
+  }, [status, session?.user?.id, router]);
 
   return { userData, error, loading };
 };

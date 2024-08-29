@@ -37,6 +37,7 @@ const NavbarUser = () => {
   if (loading) {
     return <div>Loading...</div>;
   }
+  console.log(userData)
 
   return (
     <div className="flex justify-between items-center p-4 bg-muted/40 ">

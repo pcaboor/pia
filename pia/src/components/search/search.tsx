@@ -17,6 +17,13 @@ export interface User {
     userImage?: string;
 }
 
+export interface Team {
+    teamID: string;
+    teamName: string;
+    createdBy: string;
+    team_picture?: string;
+}
+
 const highlightMatch = (text: string, query: string) => {
     if (!query) return text;
     const regex = new RegExp(`(${query})`, 'gi');
@@ -41,11 +48,11 @@ const useDebouncedValue = (value: string, delay: number) => {
 
 const SearchBar: React.FC = () => {
     const [query, setQuery] = useState('');
-    const [results, setResults] = useState<User[]>([]);
+    const [results, setResults] = useState<(User | Team)[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [open, setOpen] = useState(false);
-    const [selectedUser, setSelectedUser] = useState<User | null>(null);
+    const [selectedItem, setSelectedItem] = useState<User | Team | null>(null);
     const [filterTag, setFilterTag] = useState<string>('email');
     const [searchHistory, setSearchHistory] = useState<string[]>([]);
     const [focusedIndex, setFocusedIndex] = useState(-1);
@@ -56,7 +63,7 @@ const SearchBar: React.FC = () => {
 
     const debouncedQuery = useDebouncedValue(query, 300);
 
-    const cache = new Map<string, User[]>();
+    const cache = new Map<string, (User | Team)[]>();
 
     const fetchResults = useCallback(async () => {
         if (debouncedQuery.length < 2) {
@@ -79,7 +86,7 @@ const SearchBar: React.FC = () => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            const data: User[] = await response.json();
+            const data: (User | Team) [] = await response.json();
             cache.set(queryWithTag, data);
             setResults(data);
         } catch (error) {
@@ -113,8 +120,8 @@ const SearchBar: React.FC = () => {
             setFocusedIndex(prev => (prev > 0 ? prev - 1 : prev));
         } else if (e.key === 'Enter' && focusedIndex >= 0) {
             e.preventDefault();
-            const selectedUser = results[focusedIndex];
-            handleUserSelect(selectedUser);
+            const selectedItem = results[focusedIndex];
+            handleItemSelect(selectedItem);
         }
     };
 
@@ -125,12 +132,11 @@ const SearchBar: React.FC = () => {
         }
     }, [focusedIndex]);
 
-    const handleUserSelect = (user: User) => {
-        setSelectedUser(user);
+    const handleItemSelect = (item: User | Team) => {
+        setSelectedItem(item);
         setOpen(false);
         setSearchHistory(prev => [query, ...prev.slice(0, 7)]);
     };
-
 
 
     return (
@@ -143,51 +149,66 @@ const SearchBar: React.FC = () => {
                         className="w-full sm:w-[150px] justify-start"
                         onClick={() => setOpen(true)}
                     >
-                        
-                            <><Search className="h-4 w-4 mr-2" /><span className="font-light text-[12px]">Search...</span></>
-                        
+                        <><Search className="h-4 w-4 mr-2" /><span className="font-light text-[12px]">Search...</span></>
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent className="p-0 w-[calc(100vw-2rem)] sm:w-[600px] max-w-[600px]" side="bottom" align="start">
                     <div className="flex flex-col p-4">
                         <div className="search-bar text-xs w-full relative ">
                             <Input
-                                 type="search"
+                                type="search"
                                 value={query}
                                 onChange={handleQueryChange}
                                 onKeyDown={handleKeyDown}
                                 placeholder={`Search items by select tags... (e.g. ${filterTag}/items)`}
                                 className="search-input w-full p-2 pr-8 border rounded text-xs "
                                 ref={inputRef}
-                            />                           
+                            />
                             {error && <p className="text-red-500 mt-2">{error}</p>}
-                         
-                            { results.length > 0 && (
+                            {results.length > 0 && (
                                 <ul ref={resultsRef} className="search-results mt-2 max-h-[200px] overflow-y-auto">
-                                    {results.map((user, index) => (
+                                    {results.map((item, index) => (
                                         <li
-                                            key={user.email}
+                                            key={(item as User).email || (item as Team).teamID}
                                             className={`cursor-pointer hover:bg-muted/60 p-2 flex items-center space-x-4 ${
                                                 index === focusedIndex ? 'bg-blue-100 dark:bg-blue-900' : ''
                                             }`}
-                                            onClick={() => handleUserSelect(user)}
+                                            onClick={() => handleItemSelect(item)}
                                         >
-                                            <Avatar className='h-8 w-8'>
-                                                {user.userImage ? (
-                                                    <AvatarImage src={user.userImage} alt={user.firstName} />
-                                                ) : (
-                                                    <AvatarFallback>
-                                                        {user.firstName[0]}{user.lastName[0]}
-                                                    </AvatarFallback>
-                                                )}
-                                            </Avatar>
-
-                                            <div className="flex flex-col rounded">
-                                                <span className="font-light text-[12px]" dangerouslySetInnerHTML={{ __html: highlightMatch(user.firstName || '', debouncedQuery) }} />
-                                                <span className="font-light text-[12px]" dangerouslySetInnerHTML={{ __html: highlightMatch(user.lastName || '', debouncedQuery) }} />
-                                                <span className="font-light text-[12px]" dangerouslySetInnerHTML={{ __html: highlightMatch(user.email || '', debouncedQuery) }} />
-                                                <span className="font-light text-[12px]" dangerouslySetInnerHTML={{ __html: highlightMatch(user.teamName || '', debouncedQuery) }} />
-                                            </div>
+                                            {(item as User).email ? (
+                                                <>
+                                                    <Avatar className='h-8 w-8'>
+                                                        {(item as User).userImage ? (
+                                                            <AvatarImage src={(item as User).userImage} alt={(item as User).firstName} />
+                                                        ) : (
+                                                            <AvatarFallback>
+                                                                {(item as User).firstName[0]}{(item as User).lastName[0]}
+                                                            </AvatarFallback>
+                                                        )}
+                                                    </Avatar>
+                                                    <div className="flex flex-col rounded">
+                                                        <span className="font-light text-[12px]" dangerouslySetInnerHTML={{ __html: highlightMatch((item as User).firstName || '', debouncedQuery) }} />
+                                                        <span className="font-light text-[12px]" dangerouslySetInnerHTML={{ __html: highlightMatch((item as User).lastName || '', debouncedQuery) }} />
+                                                        <span className="font-light text-[12px]" dangerouslySetInnerHTML={{ __html: highlightMatch((item as User).email || '', debouncedQuery) }} />
+                                                        <span className="font-light text-[12px]" dangerouslySetInnerHTML={{ __html: highlightMatch((item as User).teamName || '', debouncedQuery) }} />
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Avatar className='h-8 w-8'>
+                                                        {(item as Team).team_picture ? (
+                                                            <AvatarImage src={(item as Team).team_picture} alt={(item as Team).teamName} />
+                                                        ) : (
+                                                            <AvatarFallback>
+                                                                {(item as Team).teamName[0]}
+                                                            </AvatarFallback>
+                                                        )}
+                                                    </Avatar>
+                                                    <div className="flex flex-col rounded">
+                                                        <span className="font-light text-[12px]" dangerouslySetInnerHTML={{ __html: highlightMatch((item as Team).teamName || '', debouncedQuery) }} />
+                                                    </div>
+                                                </>
+                                            )}
                                         </li>
                                     ))}
                                 </ul>
@@ -213,12 +234,11 @@ const SearchBar: React.FC = () => {
                                 </div>
                             )}
                         </div>
-
                         <div className="mt-4">
                             <span className="font-semibold">Tags</span>
                             <Separator className="my-2" />
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                                {['email', 'firstname', 'lastname', 'teamName'].map((tag, index) => (
+                                {['email', 'firstname', 'lastname', 'teamName', 'teams'].map((tag, index) => (
                                     <button
                                         key={index}
                                         className="text-xs text-blue-500 p-2 hover:bg-muted/40 rounded"
@@ -230,6 +250,7 @@ const SearchBar: React.FC = () => {
                                                 {tag === 'firstname' && <UserRound className="h-4 w-4 mr-2"/>}
                                                 {tag === 'lastname' && <BookUser className="h-4 w-4 mr-2"/>}
                                                 {tag === 'teamName' && <Users2 className="h-4 w-4 mr-2"/>}
+                                                {tag === 'teams' && <Users2 className="h-4 w-4 mr-2"/>}
                                                 /{tag}
                                             </CardHeader>
                                             <CardFooter></CardFooter>
@@ -241,7 +262,6 @@ const SearchBar: React.FC = () => {
                     </div>
                 </PopoverContent>
             </Popover>
-           
         </div>
     );
 };

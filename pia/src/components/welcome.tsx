@@ -160,7 +160,7 @@ const completion = await openai.chat.completions.create({
   <Card className="text-left">
     <CodeBlock value={'const data = await api.get(`/v1/users/${user.id}/details`);'} />
   </Card>
-
+ 
 </div>
 <Feedback />
 

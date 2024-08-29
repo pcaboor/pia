@@ -1,23 +1,27 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-import { getToken } from 'next-auth/jwt';
+// src/middleware.ts
+import { NextResponse, NextRequest } from 'next/server';
+import { getServerSession } from 'next-auth/next'; 
+import { authOptions } from '../server/auth';
 
 export async function middleware(request: NextRequest) {
-  const token = await getToken({
-    req: request,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
+  // Vérifiez si la route est protégée
+  if (request.nextUrl.pathname.startsWith('/dashboard')) {
+    // Obtenez la session de l'utilisateur
+    const session = await getServerSession(authOptions);
 
-  const tokenExpiry = token?.exp ? Number(token.exp) : undefined;
-
-  if (!token || (tokenExpiry && tokenExpiry * 1000 < Date.now())) {
-    return NextResponse.redirect(new URL('/login', request.url));
+    // Si l'utilisateur n'est pas authentifié, redirigez vers la page de connexion
+    if (!session) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/login'; // Rediriger vers la page de connexion
+      return NextResponse.redirect(url);
+    }
   }
 
+  // Continuez le traitement pour les routes non protégées ou les utilisateurs authentifiés
   return NextResponse.next();
-  
 }
 
+// Spécifiez les chemins pour lesquels ce middleware doit être appliqué
 export const config = {
-  matcher: ['/api/user/:path*', '/dashboard/:path*'],
+  matcher: ['/dashboard/:path*', 'api/:path*'], // Appliquez le middleware uniquement aux routes /dashboard et ses sous-routes
 };

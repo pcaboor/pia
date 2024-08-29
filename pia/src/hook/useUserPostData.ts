@@ -14,9 +14,9 @@ export const useUserPostData = () => {
     const [successMessage, setSuccessMessage] = useState<string>('');
 
     const fetchUserData = useCallback(async () => {
-        if (session?.user?.uniqID) {
+        if (session?.user?.id) {
             try {
-                const response = await fetch(`/api/user/${session.user.uniqID}`);
+                const response = await fetch(`/api/user/${session.user.id}`);
                 if (!response.ok) throw new Error('Failed to fetch user data');
                 const data = await response.json();
                 setUserData(data);
@@ -28,7 +28,7 @@ export const useUserPostData = () => {
                 setError('Failed to load user data');
             }
         }
-    }, [session?.user?.uniqID]);
+    }, [session?.user?.id]);
 
     useEffect(() => {
         fetchUserData();
@@ -39,7 +39,7 @@ export const useUserPostData = () => {
         setError('');
         setSuccessMessage('');
         try {
-            const response = await fetch(`/api/user/${userData?.uniqID}`, {
+            const response = await fetch(`/api/user/${userData?.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -56,9 +56,9 @@ export const useUserPostData = () => {
     };
 
     const handleDeleteUser = async () => {
-        if (userData?.uniqID) {
+        if (userData?.id) {
             try {
-                const response = await fetch(`/api/user/${userData.uniqID}`, {
+                const response = await fetch(`/api/user/${userData.id}`, {
                     method: 'DELETE',
                 });
                 if (!response.ok) throw new Error('Failed to delete user');

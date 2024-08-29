@@ -3,57 +3,73 @@ import pool from '../../../utils/db';
 
 export async function GET(req: NextRequest) {
     try {
-        // Extraire la chaîne de requête et le tag
         const fullQuery = req.nextUrl.searchParams.get('query') || '';
         const [filterTag, searchQuery] = fullQuery.split('/', 2);
 
-        // Si la chaîne de requête est vide ou mal formée, retourner une liste vide
         if (!searchQuery) {
             return new NextResponse(JSON.stringify([]), { status: 200 });
         }
 
-        // Préparer la requête SQL en fonction du tag
-        let searchQuerySQL = `
-            SELECT uniqID, firstName, lastName, email, teamName, userImage 
-            FROM users 
-            WHERE `;
-        
+        let searchQuerySQL = '';
         let params: string[] = [];
         let likeQuery = `%${searchQuery}%`;
 
         switch (filterTag) {
             case 'email':
-                searchQuerySQL += 'email LIKE ?';
+                searchQuerySQL = `
+                    SELECT uniqID AS id, firstName, lastName, email, teamName, userImage 
+                    FROM users 
+                    WHERE email LIKE ?
+                `;
                 params.push(likeQuery);
                 break;
             case 'firstname':
-                searchQuerySQL += 'firstName LIKE ?';
+                searchQuerySQL = `
+                    SELECT uniqID AS id, firstName, lastName, email, teamName, userImage 
+                    FROM users 
+                    WHERE firstName LIKE ?
+                `;
                 params.push(likeQuery);
                 break;
             case 'lastname':
-                searchQuerySQL += 'lastName LIKE ?';
+                searchQuerySQL = `
+                    SELECT uniqID AS id, firstName, lastName, email, teamName, userImage 
+                    FROM users 
+                    WHERE lastName LIKE ?
+                `;
                 params.push(likeQuery);
                 break;
             case 'teamName':
-                searchQuerySQL += 'teamName LIKE ?';
+                searchQuerySQL = `
+                    SELECT uniqID AS id, firstName, lastName, email, teamName, userImage 
+                    FROM users 
+                    WHERE teamName LIKE ?
+                `;
+                params.push(likeQuery);
+                break;
+            case 'teams':
+                searchQuerySQL = `
+                    SELECT teamID AS id, teamName, team_picture AS team_picture
+                    FROM teams
+                    WHERE teamName LIKE ?
+                `;
                 params.push(likeQuery);
                 break;
             default:
-                // Si aucun tag valide, ne pas filtrer
-                searchQuerySQL += '(firstName LIKE ? OR lastName LIKE ? OR email LIKE ? OR teamName LIKE ?)';
-                params = [likeQuery, likeQuery, likeQuery, likeQuery];
+                searchQuerySQL = `
+                    SELECT uniqID AS id, firstName, lastName, email, teamName, userImage 
+                    FROM users 
+                    WHERE (firstName LIKE ? OR lastName LIKE ? OR email LIKE ? OR teamName LIKE ?)
+                    UNION
+                    SELECT teamID AS id, teamName, team_picture AS team_picture
+                    FROM teams
+                    WHERE teamName LIKE ?
+                `;
+                params = [likeQuery, likeQuery, likeQuery, likeQuery, likeQuery];
                 break;
         }
 
-        // Debugging information
-        console.log('SQL Query:', searchQuerySQL);
-        console.log('Params:', params);
-
         const [results] = await pool.promise().query(searchQuerySQL, params);
-
-        if (results.length === 0) {
-            console.warn('No results found for query:', searchQuery);
-        }
 
         return new NextResponse(JSON.stringify(results), { status: 200 });
     } catch (error) {

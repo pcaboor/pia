@@ -1,57 +1,50 @@
-// hooks/useLoginForm.ts
-import { useState, FormEvent } from 'react';
+// src/hooks/useUserData.ts
+import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 
-interface User {
+type LoginInput = {
   email: string;
   password: string;
 }
 
-export const useLoginForm = () => {
-  const [user, setUser] = useState<User>({
-    email: '',
-    password: '',
-  });
+export function useUserLogin() {
+  const [inputs, setInputs] = useState<LoginInput>({ email: "", password: "" });
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const [error, setError] = useState<string>('');
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const name = event.target.name;
+    const value = event.target.value;
+    setInputs(values => ({ ...values, [name]: value }));
+  }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    setUser((prevState) => ({
-      ...prevState,
-      [id]: value,
-    }));
-  };
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setIsLoading(true);
+    setError(null);
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-  
-    e.preventDefault();
-    setError('');
-
-    const result = await signIn('credentials', {
-      redirect: false,
-      email: user.email,
-      password: user.password,
-    });
-
-    if (result?.error) {
-      setError(result.error);
-    } else if (result?.ok) {
-      window.location.replace( '/dashboard');
-    }
-  };
-
-    // Github Login
-    const handleGithubLogin = () => {
-        signIn('github', { callbackUrl: '/dashboard' })
+    try {
+      const result = await signIn("credentials", { 
+        email: inputs.email, 
+        password: inputs.password, 
+        callbackUrl: '/dashboard' 
+      });
+      
+      if (result?.error) {
+        setError(result.error);
       }
+    } catch (err) {
+      setError("An unexpected error occurred.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   return {
-    user,
+    inputs,
     error,
+    isLoading,
     handleChange,
-    handleSubmit,
-    handleGithubLogin,
+    handleSubmit
   };
-};
-
+}

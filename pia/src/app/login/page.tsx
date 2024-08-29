@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FormEvent, useState } from "react";
 
-import { useLoginForm } from "@/hook/useUserLogin";
+import { useUserLogin } from "@/hook/useUserLogin";
 
 import { Space_Grotesk } from 'next/font/google';
 
@@ -17,17 +17,21 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 
-export default function LoginForm() {
-  const { user, error, handleChange, handleSubmit, handleGithubLogin } = useLoginForm();
+type PageProps = {
+  searchParams: { error?: string }
+}
+
+export default function LoginForm({ searchParams }: PageProps) {
+  const { inputs, error, isLoading, handleChange, handleSubmit } = useUserLogin();
 
   return (
     <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
       <div className="flex items-center justify-center py-12">
         <div className="mx-auto grid w-[350px] gap-6">
           <div className="grid gap-2 text-center">
-          <h1 className="text-3xl font-bold">
-      Login to <span className={spaceGrotesk.className}>Buster</span>
-    </h1>
+            <h1 className="text-3xl font-bold">
+              Login to <span className={spaceGrotesk.className}>Buster</span>
+            </h1>
             <p className="text-muted-foreground">
               Enter your email below to login to your account
             </p>
@@ -38,13 +42,14 @@ export default function LoginForm() {
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  value={user.email}
-                  onChange={handleChange}
-                  required
-                />
+                id="email"
+                name="email"
+                type="email"
+                placeholder="m@example.com"
+                value={inputs.email}
+                onChange={handleChange}
+                required
+              />
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center">
@@ -58,16 +63,17 @@ export default function LoginForm() {
                 </div>
                 <Input
                   id="password"
+                  name="password"
                   type="password"
-                  value={user.password}
+                  value={inputs.password}
                   onChange={handleChange}
                   required
                 />
               </div>
-              <Button type="submit" className="w-full">
-                Login
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? 'Loading...' : 'Login'}
               </Button>
-              <Button variant="outline" className="w-full" onClick={handleGithubLogin}>
+              <Button variant="outline" className="w-full">
                 Login with Github
               </Button>
             </form>
@@ -84,8 +90,8 @@ export default function LoginForm() {
         <Image
           src="https://i.pinimg.com/564x/20/c6/e7/20c6e7e27341a9a09c00821a99cfb17a.jpg"
           alt="Login background"
-          layout="fill"
-          objectFit="cover"
+          fill
+          style={{ objectFit: 'cover' }}
           className="dark:brightness-[0.2] dark:grayscale"
         />
       </div>

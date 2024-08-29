@@ -4,22 +4,22 @@ import pool from '../../../../utils/db';
 
 // Fonction pour obtenir le token JWT de l'utilisateur
 const authenticate = async (req: NextRequest) => {
-    const token = await getToken({
-        req,
-        secret: process.env.NEXTAUTH_SECRET,
-    });
-
-    if (!token || !token.sub) {
-        return new NextResponse('Unauthorized', { status: 401 });
+    try {
+        const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+        if (!token || !token.userId) {
+            return new NextResponse('Unauthorized', { status: 401 });
+        }
+        return token.userId;
+    } catch (error) {
+        console.error('Error authenticating token:', error);
+        return new NextResponse('Internal Server Error', { status: 500 });
     }
-
-    return token.sub;
 };
 
 // Fonction pour obtenir les données utilisateur
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
     const userId = await authenticate(req);
-    if (userId instanceof NextResponse) return userId;
+    if (userId instanceof NextResponse) return userId; // Authorization failure
 
     const { id } = params;
     if (userId !== id) {
@@ -44,24 +44,24 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 // Fonction pour mettre à jour les données utilisateur
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
     const userId = await authenticate(req);
-    if (userId instanceof NextResponse) return userId;
+    if (userId instanceof NextResponse) return userId; // Authorization failure
 
     const { id } = params;
     if (userId !== id) {
         return new NextResponse('Forbidden', { status: 403 });
     }
 
-    const { firstName, lastName, email, teamName } = await req.json();
-
-    if (!firstName || !lastName || !email) {
-        return new NextResponse('Missing required fields', { status: 400 });
-    }
-
-    const query = `
-        UPDATE users SET firstName = ?, lastName = ?, email = ?, teamName = ?
-        WHERE uniqID = ?`;
-
     try {
+        const { firstName, lastName, email, teamName } = await req.json();
+
+        if (!firstName || !lastName || !email) {
+            return new NextResponse('Missing required fields', { status: 400 });
+        }
+
+        const query = `
+            UPDATE users SET firstName = ?, lastName = ?, email = ?, teamName = ?
+            WHERE uniqID = ?`;
+
         const [results] = await pool.promise().query(query, [firstName, lastName, email, teamName, id]);
 
         if ((results as any).affectedRows === 0) {
@@ -78,16 +78,16 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 // Fonction pour supprimer un utilisateur
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
     const userId = await authenticate(req);
-    if (userId instanceof NextResponse) return userId;
+    if (userId instanceof NextResponse) return userId; // Authorization failure
 
     const { id } = params;
     if (userId !== id) {
         return new NextResponse('Forbidden', { status: 403 });
     }
 
-    const query = `DELETE FROM users WHERE uniqID = ?`;
-
     try {
+        const query = `DELETE FROM users WHERE uniqID = ?`;
+
         const [results] = await pool.promise().query(query, [id]);
 
         if ((results as any).affectedRows === 0) {
