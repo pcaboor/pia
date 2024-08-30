@@ -1,4 +1,4 @@
-import pool from "../utils/db";
+import pool from "./db";
 
 // Fonction pour insérer un OTP dans la base de données
 export async function insertOtp(email: string, otp: string, expires: number): Promise<void> {
